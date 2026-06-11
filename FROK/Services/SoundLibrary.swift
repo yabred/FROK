@@ -164,6 +164,14 @@ final class SoundLibrary {
         resolvedURLs[id]
     }
 
+    var loadedMemoryUsage: Int {
+        buffers.values.reduce(0) { $0 + Self.memorySize(of: $1) }
+    }
+
+    var formattedLoadedMemoryUsage: String {
+        Self.byteCountFormatter.string(fromByteCount: Int64(loadedMemoryUsage))
+    }
+
     func aliasBinding(for id: UUID) -> Binding<String> {
         Binding(
             get: { [self] in
@@ -357,6 +365,21 @@ final class SoundLibrary {
     }
 
     // MARK: - Helpers
+
+    private static let byteCountFormatter: ByteCountFormatter = {
+        let formatter = ByteCountFormatter()
+        formatter.countStyle = .memory
+        return formatter
+    }()
+
+    private static func memorySize(of buffer: AVAudioPCMBuffer) -> Int {
+        let frameLength = Int(buffer.frameLength)
+        let bytesPerFrame = Int(buffer.format.streamDescription.pointee.mBytesPerFrame)
+        if buffer.format.isInterleaved {
+            return frameLength * bytesPerFrame
+        }
+        return frameLength * bytesPerFrame * Int(buffer.format.channelCount)
+    }
 
     private func uniqueAlias(for base: String) -> String {
         var candidate = base

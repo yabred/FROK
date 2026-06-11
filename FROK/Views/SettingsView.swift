@@ -20,6 +20,11 @@ struct SettingsView: View {
 
             HStack {
                 Spacer()
+
+                Text("Loaded sounds: \(soundLibrary.formattedLoadedMemoryUsage)")
+                    .foregroundStyle(.secondary)
+                    .font(.caption)
+
                 Button("Exit") {
                     NSApplication.shared.terminate(nil)
                 }
