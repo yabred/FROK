@@ -14,8 +14,8 @@
 		A10000010000000000000014 /* SoundCommandHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000010000000000000054 /* SoundCommandHandler.swift */; };
 		A10000010000000000000015 /* SocketServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000010000000000000055 /* SocketServer.swift */; };
 		A10000010000000000000016 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000010000000000000056 /* SettingsView.swift */; };
-		A10000010000000000000018 /* LaunchAtLoginManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000010000000000000059 /* LaunchAtLoginManager.swift */; };
 		A10000010000000000000017 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A10000010000000000000057 /* Assets.xcassets */; };
+		A10000010000000000000018 /* LaunchAtLoginManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000010000000000000059 /* LaunchAtLoginManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -188,10 +188,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = EP8UBDJTLC;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -205,8 +207,9 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.user.frok;
+				PRODUCT_BUNDLE_IDENTIFIER = com.YB.frok;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -217,10 +220,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = EP8UBDJTLC;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -234,8 +239,9 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.user.frok;
+				PRODUCT_BUNDLE_IDENTIFIER = com.YB.frok;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
