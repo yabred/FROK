@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 struct SettingsView: View {
@@ -15,6 +16,13 @@ struct SettingsView: View {
                 .padding(.top, 16)
 
             Spacer()
+
+            HStack {
+                Spacer()
+                Button("Exit") {
+                    NSApplication.shared.terminate(nil)
+                }
+            }
         }
         .frame(minWidth: 400, minHeight: 300)
         .padding()
