@@ -4,6 +4,7 @@ struct SoundRowView: View {
     @Environment(SoundLibrary.self) private var soundLibrary
 
     let entry: SoundEntry
+    @Binding var activeRecordingID: UUID?
 
     private let volumeTicks: [Double] = [0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5]
 
@@ -12,6 +13,7 @@ struct SoundRowView: View {
             statusIcon
             playIndicator
             aliasField
+            hotkeyField
             pathLabel
             volumeControl
             deleteButton
@@ -63,6 +65,10 @@ struct SoundRowView: View {
         TextField("Alias", text: soundLibrary.aliasBinding(for: entry.id))
             .textFieldStyle(.roundedBorder)
             .frame(width: 100)
+    }
+
+    private var hotkeyField: some View {
+        HotkeyRecorderField(entryID: entry.id, activeRecordingID: $activeRecordingID)
     }
 
     private var pathLabel: some View {

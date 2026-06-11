@@ -5,6 +5,7 @@ struct SoundEntry: Identifiable, Equatable {
     var alias: String
     var bookmarkData: Data
     var volume: Double
+    var hotkey: SoundHotkey?
     var loadStatus: SoundLoadStatus
     var playbackState: SoundPlaybackState
 
@@ -13,6 +14,7 @@ struct SoundEntry: Identifiable, Equatable {
         alias: String,
         bookmarkData: Data,
         volume: Double = 1.0,
+        hotkey: SoundHotkey? = nil,
         loadStatus: SoundLoadStatus = .loading,
         playbackState: SoundPlaybackState = .idle
     ) {
@@ -20,6 +22,7 @@ struct SoundEntry: Identifiable, Equatable {
         self.alias = alias
         self.bookmarkData = bookmarkData
         self.volume = volume
+        self.hotkey = hotkey
         self.loadStatus = loadStatus
         self.playbackState = playbackState
     }
@@ -30,11 +33,12 @@ struct StoredSoundEntry: Codable, Equatable {
     var alias: String
     var bookmarkData: Data
     var volume: Double
+    var hotkey: SoundHotkey?
 }
 
 extension SoundEntry {
     var stored: StoredSoundEntry {
-        StoredSoundEntry(id: id, alias: alias, bookmarkData: bookmarkData, volume: volume)
+        StoredSoundEntry(id: id, alias: alias, bookmarkData: bookmarkData, volume: volume, hotkey: hotkey)
     }
 
     init(stored: StoredSoundEntry) {
@@ -43,6 +47,7 @@ extension SoundEntry {
             alias: stored.alias,
             bookmarkData: stored.bookmarkData,
             volume: stored.volume,
+            hotkey: stored.hotkey,
             loadStatus: .loading,
             playbackState: .idle
         )

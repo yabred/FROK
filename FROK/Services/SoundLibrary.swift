@@ -8,6 +8,9 @@ import SwiftUI
 final class SoundLibrary {
     private(set) var entries: [SoundEntry] = []
 
+    var onHotkeysChanged: (() -> Void)?
+    var onHotkeyRecordingChanged: ((Bool) -> Void)?
+
     private var buffers: [UUID: AVAudioPCMBuffer] = [:]
     private var resolvedURLs: [UUID: URL] = [:]
     private var securityScopedURLs: [UUID: URL] = [:]
@@ -69,6 +72,7 @@ final class SoundLibrary {
         resolvedURLs[id] = nil
         entries.removeAll { $0.id == id }
         persist()
+        onHotkeysChanged?()
     }
 
     func updateAlias(id: UUID, alias: String) {
@@ -90,6 +94,33 @@ final class SoundLibrary {
         for playback in activePlaybacks where playback.entryID == id {
             applyPlaybackVolume(clamped, to: playback.mixerNode)
         }
+    }
+
+    @discardableResult
+    func updateHotkey(id: UUID, hotkey: SoundHotkey?) -> Bool {
+        guard let index = entries.firstIndex(where: { $0.id == id }) else { return false }
+
+        if let hotkey {
+            guard hotkey.isValid else { return false }
+            guard !entries.contains(where: { $0.id != id && $0.hotkey == hotkey }) else { return false }
+        }
+
+        entries[index].hotkey = hotkey
+        persist()
+        onHotkeysChanged?()
+        return true
+    }
+
+    func keyDownPlay(id: UUID) {
+        playEntry(id: id)
+    }
+
+    func keyUpStop(id: UUID) {
+        stopPlaybacks(for: id, manualFromUI: false)
+    }
+
+    func isHotkeyAvailable(_ hotkey: SoundHotkey, excluding id: UUID) -> Bool {
+        !entries.contains { $0.id != id && $0.hotkey == hotkey }
     }
 
     func togglePlayback(id: UUID) {
@@ -151,6 +182,17 @@ final class SoundLibrary {
             },
             set: { [self] newValue in
                 updateVolume(id: id, volume: newValue)
+            }
+        )
+    }
+
+    func hotkeyBinding(for id: UUID) -> Binding<SoundHotkey?> {
+        Binding(
+            get: { [self] in
+                entries.first(where: { $0.id == id })?.hotkey
+            },
+            set: { [self] newValue in
+                updateHotkey(id: id, hotkey: newValue)
             }
         )
     }

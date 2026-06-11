@@ -6,6 +6,7 @@ struct SettingsView: View {
     @Environment(SoundLibrary.self) private var soundLibrary
     @EnvironmentObject private var launchAtLogin: LaunchAtLoginManager
     @State private var tableHeight: CGFloat = 0
+    @State private var activeRecordingID: UUID?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -24,11 +25,18 @@ struct SettingsView: View {
                 }
             }
         }
-        .frame(minWidth: 880)
+        .frame(minWidth: 720)
         .fixedSize(horizontal: false, vertical: true)
         .padding()
+        .contentShape(Rectangle())
+        .onTapGesture {
+            activeRecordingID = nil
+        }
         .onAppear {
             launchAtLogin.refreshStatus()
+        }
+        .onChange(of: activeRecordingID) { _, newValue in
+            soundLibrary.onHotkeyRecordingChanged?(newValue != nil)
         }
     }
 
@@ -57,7 +65,7 @@ struct SettingsView: View {
                 .padding(.top, 16)
 
             ForEach(soundLibrary.entries) { entry in
-                SoundRowView(entry: entry)
+                SoundRowView(entry: entry, activeRecordingID: $activeRecordingID)
             }
 
             Button("Add new sound") {
