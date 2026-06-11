@@ -1,8 +1,10 @@
 import AppKit
 import OSLog
 
+@MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    private let commandHandler = SoundCommandHandler()
+    let soundLibrary = SoundLibrary()
+    private lazy var commandHandler = SoundCommandHandler(soundLibrary: soundLibrary)
     private var socketServer: SocketServer?
 
     func applicationDidFinishLaunching(_ notification: Notification) {

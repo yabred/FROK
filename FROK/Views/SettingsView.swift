@@ -1,7 +1,9 @@
 import AppKit
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct SettingsView: View {
+    @Environment(SoundLibrary.self) private var soundLibrary
     @EnvironmentObject private var launchAtLogin: LaunchAtLoginManager
     @State private var tableHeight: CGFloat = 0
 
@@ -22,7 +24,7 @@ struct SettingsView: View {
                 }
             }
         }
-        .frame(width: 400)
+        .frame(minWidth: 880)
         .fixedSize(horizontal: false, vertical: true)
         .padding()
         .onAppear {
@@ -53,15 +55,34 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: 0) {
             Text("Sound")
                 .padding(.top, 16)
-            Text("Sound")
-                .padding(.top, 16)
-            Text("Sound")
-                .padding(.top, 16)
+
+            ForEach(soundLibrary.entries) { entry in
+                SoundRowView(entry: entry)
+            }
+
+            Button("Add new sound") {
+                openSoundPicker()
+            }
+            .frame(maxWidth: .infinity)
+            .controlSize(.large)
+            .padding(.top, 8)
         }
+    }
+
+    private func openSoundPicker() {
+        let panel = NSOpenPanel()
+        panel.allowsMultipleSelection = true
+        panel.canChooseDirectories = false
+        panel.canChooseFiles = true
+        panel.allowedContentTypes = [.audio, .mp3, .aiff, .wav]
+
+        guard panel.runModal() == .OK else { return }
+        soundLibrary.addSounds(from: panel.urls)
     }
 }
 
 #Preview {
     SettingsView()
+        .environment(SoundLibrary())
         .environmentObject(LaunchAtLoginManager.shared)
 }

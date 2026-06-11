@@ -8,6 +8,7 @@ struct FROKApp: App {
     var body: some Scene {
         MenuBarExtra("FROK", systemImage: "speaker.wave.2.fill") {
             SettingsView()
+                .environment(appDelegate.soundLibrary)
                 .environmentObject(launchAtLoginManager)
         }
         .menuBarExtraStyle(.window)
