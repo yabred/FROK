@@ -6,6 +6,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var socketServer: SocketServer?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        Task { @MainActor in
+            LaunchAtLoginManager.shared.configureDefaultIfNeeded()
+        }
+
         socketServer = SocketServer(commandHandler: commandHandler)
 
         do {
