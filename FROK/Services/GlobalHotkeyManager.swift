@@ -39,8 +39,10 @@ final class GlobalHotkeyManager: @unchecked Sendable {
 
         if hotkeyMap.isEmpty {
             removeTap()
-        } else {
+        } else if AXIsProcessTrusted() {
             installTapIfNeeded()
+        } else {
+            removeTap()
         }
     }
 
@@ -55,7 +57,6 @@ final class GlobalHotkeyManager: @unchecked Sendable {
 
         guard AXIsProcessTrusted() else {
             Logger.frok.error("Accessibility permission required for global hotkeys")
-            promptForAccessibilityIfNeeded()
             return
         }
 
@@ -92,12 +93,6 @@ final class GlobalHotkeyManager: @unchecked Sendable {
         }
         eventTap = nil
         runLoopSource = nil
-    }
-
-    @MainActor
-    private func promptForAccessibilityIfNeeded() {
-        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
-        AXIsProcessTrustedWithOptions(options)
     }
 
     private func shouldConsume(event: CGEvent, type: CGEventType) -> Bool {

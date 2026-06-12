@@ -25,6 +25,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         hotkeyManager?.sync(with: soundLibrary.entries)
 
+        AccessibilityPermissionManager.shared.onTrustChanged = { [weak self] _ in
+            Task { @MainActor in
+                guard let self else { return }
+                self.hotkeyManager?.sync(with: self.soundLibrary.entries)
+            }
+        }
+        AccessibilityPermissionManager.shared.startMonitoring()
+
         socketServer = SocketServer(commandHandler: commandHandler)
 
         do {

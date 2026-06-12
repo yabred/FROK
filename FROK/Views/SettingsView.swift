@@ -5,6 +5,7 @@ import UniformTypeIdentifiers
 struct SettingsView: View {
     @Environment(SoundLibrary.self) private var soundLibrary
     @EnvironmentObject private var launchAtLogin: LaunchAtLoginManager
+    @EnvironmentObject private var accessibilityPermission: AccessibilityPermissionManager
     @State private var tableHeight: CGFloat = 0
     @State private var activeRecordingID: UUID?
 
@@ -14,6 +15,11 @@ struct SettingsView: View {
                 Spacer()
                 Toggle("Launch at login", isOn: launchAtLoginBinding)
                     .toggleStyle(.checkbox)
+            }
+
+            if !accessibilityPermission.isTrusted {
+                accessibilityBanner
+                    .padding(.top, 8)
             }
 
             table
@@ -39,9 +45,39 @@ struct SettingsView: View {
         }
         .onAppear {
             launchAtLogin.refreshStatus()
+            accessibilityPermission.refreshStatus()
         }
         .onChange(of: activeRecordingID) { _, newValue in
             soundLibrary.onHotkeyRecordingChanged?(newValue != nil)
+        }
+    }
+
+    private var accessibilityBanner: some View {
+        HStack(spacing: 12) {
+            VStack(alignment: .leading) {
+                Text("Accessibility access is required for global hotkeys.")
+                    .foregroundStyle(.red)
+                    .font(.callout)
+                Text("Settings → Privacy & Security → Accessibility → FROK")
+                    .font(.caption2)
+            }
+            
+            Spacer(minLength: 8)
+
+            Button("Open System Settings") {
+                accessibilityPermission.openAccessibilitySettings()
+            }
+            .controlSize(.small)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background {
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.red.opacity(0.15))
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 8)
+                .strokeBorder(Color.red.opacity(0.5), lineWidth: 1)
         }
     }
 
@@ -98,4 +134,5 @@ struct SettingsView: View {
     SettingsView()
         .environment(SoundLibrary())
         .environmentObject(LaunchAtLoginManager.shared)
+        .environmentObject(AccessibilityPermissionManager.shared)
 }
