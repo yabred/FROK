@@ -11,11 +11,7 @@ struct SettingsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack {
-                Spacer()
-                Toggle("Launch at login", isOn: launchAtLoginBinding)
-                    .toggleStyle(.checkbox)
-            }
+            header
 
             if !accessibilityPermission.isTrusted {
                 accessibilityBanner
@@ -24,17 +20,7 @@ struct SettingsView: View {
 
             table
 
-            HStack {
-                Spacer()
-
-                Text("Loaded sounds: \(soundLibrary.formattedLoadedMemoryUsage)")
-                    .foregroundStyle(.secondary)
-                    .font(.caption)
-
-                Button("Exit") {
-                    NSApplication.shared.terminate(nil)
-                }
-            }
+            footer
         }
         .frame(minWidth: 720)
         .fixedSize(horizontal: false, vertical: true)
@@ -52,14 +38,30 @@ struct SettingsView: View {
         }
     }
 
+    private var header: some View {
+        HStack {
+            Text("FRO")
+                .font(.title)
+                .fontWeight(.bold) +
+            Text("g") +
+            Text(" K")
+                .font(.title)
+                .fontWeight(.bold) +
+            Text("eyboard")
+            Spacer()
+        }
+    }
+    
     private var accessibilityBanner: some View {
         HStack(spacing: 12) {
             VStack(alignment: .leading) {
                 Text("Accessibility access is required for global hotkeys.")
                     .foregroundStyle(.red)
                     .font(.callout)
-                Text("Settings → Privacy & Security → Accessibility → FROK")
+                Text(accessibilityPermission.bundlePathForDisplay)
                     .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
             }
             
             Spacer(minLength: 8)
@@ -81,6 +83,10 @@ struct SettingsView: View {
         }
     }
 
+    private var appVersion: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—"
+    }
+
     private var launchAtLoginBinding: Binding<Bool> {
         Binding(
             get: { launchAtLogin.isEnabled },
@@ -98,13 +104,11 @@ struct SettingsView: View {
                 }
         }
         .frame(height: tableHeight)
+        .padding(.top, 16)
     }
 
     private var tableContent: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("Sound")
-                .padding(.top, 16)
-
             ForEach(soundLibrary.entries) { entry in
                 SoundRowView(entry: entry, activeRecordingID: $activeRecordingID)
             }
@@ -115,6 +119,27 @@ struct SettingsView: View {
             .frame(maxWidth: .infinity)
             .controlSize(.large)
             .padding(.top, 8)
+        }
+    }
+
+    private var footer: some View {
+        HStack(spacing: 12) {
+            Toggle("Launch at login", isOn: launchAtLoginBinding)
+                .toggleStyle(.checkbox)
+            
+            Spacer()
+            
+            Text("Version \(appVersion)")
+                .foregroundStyle(.secondary)
+                .font(.caption)
+            
+            Text("Loaded sounds: \(soundLibrary.formattedLoadedMemoryUsage)")
+                .foregroundStyle(.secondary)
+                .font(.caption)
+            
+            Button("Exit") {
+                NSApplication.shared.terminate(nil)
+            }
         }
     }
 

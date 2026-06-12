@@ -30,7 +30,7 @@ final class AccessibilityPermissionManager: ObservableObject {
 
         refreshStatus()
 
-        pollTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+        pollTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { [weak self] _ in
             Task { @MainActor in
                 self?.refreshStatus()
             }
@@ -48,6 +48,14 @@ final class AccessibilityPermissionManager: ObservableObject {
     }
 
     func openAccessibilitySettings() {
+        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
+        let trustedAfterPrompt = AXIsProcessTrustedWithOptions(options)
+
+        if trustedAfterPrompt {
+            refreshStatus()
+            return
+        }
+
         let modernURL = URL(
             string: "x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension?Security_Accessibility"
         )
@@ -62,5 +70,9 @@ final class AccessibilityPermissionManager: ObservableObject {
         if let legacyURL {
             NSWorkspace.shared.open(legacyURL)
         }
+    }
+
+    var bundlePathForDisplay: String {
+        Bundle.main.bundlePath
     }
 }
