@@ -1,3 +1,4 @@
+import AppKit
 import AVFoundation
 import Foundation
 import OSLog
@@ -16,7 +17,6 @@ final class SoundLibrary {
     private var securityScopedURLs: [UUID: URL] = [:]
 
     private let engine = AVAudioEngine()
-    private var engineStarted = false
 
     private struct ActivePlayback: Identifiable {
         let id = UUID()
@@ -33,6 +33,16 @@ final class SoundLibrary {
         entries = stored.map(SoundEntry.init(stored:))
         for entry in entries {
             Task { await preload(entryID: entry.id) }
+        }
+
+        NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.didWakeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                self?.handleSystemWake()
+            }
         }
     }
 
@@ -279,6 +289,34 @@ final class SoundLibrary {
         mixerNode.outputVolume = Float(min(max(volume, 0), 1.5))
     }
 
+    private func ensureEngineRunning() throws {
+        guard !engine.isRunning else { return }
+        try engine.start()
+    }
+
+    private func handleSystemWake() {
+        guard !activePlaybacks.isEmpty || engine.isRunning else { return }
+
+        let staleCount = activePlaybacks.count
+        Logger.frok.notice("System wake: resetting audio engine and \(staleCount) stale playback(s)")
+
+        let entryIDs = Set(activePlaybacks.map(\.entryID))
+        let playbacks = activePlaybacks
+        for playback in playbacks {
+            teardownPlayback(playback)
+        }
+
+        if engine.isRunning {
+            engine.stop()
+        }
+
+        for entryID in entryIDs {
+            stopFlashTasks[entryID]?.cancel()
+            stopFlashTasks[entryID] = nil
+            refreshPlaybackState(for: entryID)
+        }
+    }
+
     private func startPlayback(entryID: UUID, buffer: AVAudioPCMBuffer, volume: Double) throws {
         let playerNode = AVAudioPlayerNode()
         let mixerNode = AVAudioMixerNode()
@@ -290,10 +328,7 @@ final class SoundLibrary {
         engine.connect(playerNode, to: mixerNode, format: format)
         engine.connect(mixerNode, to: engine.mainMixerNode, format: format)
 
-        if !engineStarted {
-            try engine.start()
-            engineStarted = true
-        }
+        try ensureEngineRunning()
 
         applyPlaybackVolume(volume, to: mixerNode)
 
