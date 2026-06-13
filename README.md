@@ -1,105 +1,121 @@
 # FROK
 
-Нативное macOS-приложение для **мгновенного воспроизведения звуков по горячим клавишам**. Заменяет резидентный Node.js-демон ([Karabiner Audio Daemon](old_daemon/AUDIO_DAEMON_SPEC.md)): держит звуки в памяти и принимает команды через Unix-сокет — без запуска `afplay` / `ffmpeg` на каждое нажатие.
+Нативное macOS-приложение для **мгновенного воспроизведения звуков по горячим клавишам**. Держит звуки декодированными в памяти и воспроизводит их через Core Audio — без запуска `afplay` / `ffmpeg` на каждое нажатие.
 
 ```mermaid
 flowchart LR
-    Karabiner["Karabiner-Elements\nshell_command"] --> PlayScript["play_sound.sh"]
-    PlayScript -->|"echo | nc -U"| Socket["/tmp/frok.sock"]
-    Socket --> FROK["FROK\nSwift / Core Audio"]
-    SoundsDir["~/Sounds/karabiner/"] --> FROK
+    Hotkeys["Global hotkeys\n(CGEvent tap)"] --> FROK["FROK\nSwift / AVAudioEngine"]
+    IPC["Unix socket\n/tmp/frok.sock"] --> FROK
     MenuBar["Menu Bar Extra"] --> FROK
+    Files["Audio files\n(security-scoped bookmarks)"] --> FROK
 ```
 
-## Зачем
+## Возможности
 
-| Было (Node.js) | Стало (FROK) |
-|----------------|--------------|
-| `node audio_daemon.js` + npm (`speaker`, ffmpeg) | Нативный Swift, Core Audio |
-| Сокет `/tmp/keyclick.sock` | Сокет `/tmp/frok.sock` |
-| LaunchAgent `com.user.keyclick` | Menu bar app (`LSUIElement`) |
-| Логи в `/tmp/keyclick.log` | OSLog (`com.user.frok`) |
-
-Протокол IPC сохранён — достаточно обновить путь к сокету в клиентском скрипте.
+- **Menu bar app** — работает в фоне без иконки в Dock (`LSUIElement`)
+- **Глобальные hotkey-и** — назначение сочетаний клавиш на каждый звук (нужен Accessibility)
+- **Hold-to-play** — удержание клавиши играет звук, отпускание останавливает
+- **Preload в RAM** — файлы декодируются в `AVAudioPCMBuffer` при добавлении
+- **Concurrent playback** — несколько звуков одновременно; команда `-stop` останавливает все
+- **Per-sound volume** — громкость 0–150% для каждого звука
+- **Unix socket IPC** — совместимый текстовый протокол для внешних скриптов и автоматизаций
+- **Launch at login** — автозапуск через `SMAppService`
+- **OSLog** — логи в Console.app, subsystem `com.user.frok`
 
 ## Требования
 
 - macOS 14.0+
 - Xcode 15+
-- Каталог звуков: `~/Sounds/karabiner/` (aliases, symlinks, обычные файлы)
+- Разрешение **Accessibility** — для глобальных hotkey-ов (запрашивается из UI)
 
 ## Сборка и запуск
 
 1. Открыть `FROK.xcodeproj` в Xcode.
 2. Выбрать схему **FROK**, собрать и запустить (⌘R).
-3. В строке меню появится иконка динамика — приложение работает в фоне без иконки в Dock.
+3. В строке меню появится иконка — клик открывает окно настроек.
 
 ```bash
 xcodebuild -scheme FROK -configuration Debug build
 open DerivedData/Build/Products/Debug/FROK.app
 ```
 
+## Использование
+
+1. Запустить FROK — при первом запуске включится **Launch at login**.
+2. Нажать **Add new sound** и выбрать аудиофайлы (MP3, AIFF, WAV и др.).
+3. Задать **alias** — имя для IPC-команд (например `bonk`).
+4. Назначить **hotkey** — клик по полю и нажать сочетание с модификатором (⌥, ⌘, ⌃, ⇧).
+5. При необходимости выдать **Accessibility** в System Settings — иначе hotkey-и не сработают.
+
+Звуки сохраняются как security-scoped bookmarks в `UserDefaults` и переживают перезапуск приложения.
+
 ## Протокол IPC
 
-Клиент отправляет **одну текстовую строку** в Unix domain socket `/tmp/frok.sock` (права `0666`):
+Сокет: **`/tmp/frok.sock`** (Unix domain socket, права `0666`).  
+FROK создаёт его при запуске и удаляет при выходе.
+
+### Формат сообщения
+
+Клиент подключается, отправляет **одну текстовую строку** (UTF-8) и закрывает соединение. Ответа от сервера нет.
 
 | Команда | Поведение |
 |---------|-----------|
-| *(пустая строка)* или `play` | Воспроизвести звук по умолчанию |
+| *(пустая строка)* или `play` | Воспроизвести первый загруженный звук |
 | `-stop` | Остановить все активные воспроизведения |
-| `<имя_файла>` | Воспроизвести звук по имени (basename в каталоге) |
+| `<alias>` | Воспроизвести звук по alias; если не найден — fallback на первый загруженный |
 
-Примеры:
+`<alias>` — значение из колонки **Alias** в настройках FROK (регистр важен).
+
+### Как отправить команду
+
+**1. Отправить строку через `nc` (рекомендуется на macOS):**
 
 ```bash
+# воспроизвести звук по alias
 echo "bonk" | nc -U /tmp/frok.sock
+
+# остановить всё
 echo "-stop" | nc -U /tmp/frok.sock
-echo "" | nc -U /tmp/frok.sock   # default sound
+
+# дефолтный звук (пустая команда)
+echo "" | nc -U /tmp/frok.sock
+echo "play" | nc -U /tmp/frok.sock
 ```
-
-Клиент для Karabiner — [`old_daemon/play_sound.sh`](old_daemon/play_sound.sh):
-
-```bash
-$HOME/.config/karabiner/play_sound.sh bonk
-$HOME/.config/karabiner/play_sound.sh -stop
-```
-
-## Интеграция с Karabiner-Elements
-
-Karabiner вызывает shell-команды из правил:
-
-```json
-{ "shell_command": "$HOME/.config/karabiner/play_sound.sh bonk" }
-```
-
-**Паттерны:**
-
-1. **One-shot** — одно нажатие → один звук.
-2. **Hold-to-play** — `to` запускает звук, `to_after_key_up` шлёт `-stop` (для длинных клипов).
-
-Подробнее о звуках, hotkey-ах и известных несоответствиях — в [спецификации старого демона](old_daemon/AUDIO_DAEMON_SPEC.md).
 
 ## Архитектура
 
 ```
 FROK/
-├── FROKApp.swift              # @main, MenuBarExtra
-├── AppDelegate.swift          # lifecycle, запуск/остановка сокета
+├── FROKApp.swift                    # @main, MenuBarExtra
+├── AppDelegate.swift                # lifecycle, socket + hotkeys
 ├── Models/
-│   └── SoundCommand.swift     # парсинг текстового протокола
+│   ├── SoundCommand.swift           # парсинг текстового протокола
+│   ├── SoundEntry.swift             # звук: alias, bookmark, volume, hotkey
+│   ├── SoundHotkey.swift            # модель и отображение hotkey
+│   ├── SoundLoadStatus.swift
+│   └── SoundPlaybackState.swift
 ├── Services/
-│   ├── SocketServer.swift     # Unix socket (AF_UNIX, non-blocking accept)
-│   ├── SoundCommandHandler.swift  # обработка команд
-│   └── Logger+FROK.swift      # OSLog subsystem
+│   ├── SoundLibrary.swift           # preload, AVAudioEngine, playback
+│   ├── SoundCommandHandler.swift    # обработка IPC-команд
+│   ├── SocketServer.swift           # Unix socket (AF_UNIX)
+│   ├── GlobalHotkeyManager.swift    # CGEvent tap, hold-to-play
+│   ├── SoundPersistence.swift       # UserDefaults + bookmarks
+│   ├── LaunchAtLoginManager.swift   # SMAppService
+│   ├── AccessibilityPermissionManager.swift
+│   ├── SoundFilePicker.swift
+│   ├── MenuBarState.swift
+│   └── Logger+FROK.swift
 └── Views/
-    └── SettingsView.swift     # окно настроек (placeholder)
+    ├── SettingsView.swift           # список звуков, footer
+    ├── SoundRowView.swift           # строка: play, alias, hotkey, volume
+    └── HotkeyRecorderField.swift
 ```
 
 Поток данных:
 
-1. `AppDelegate` при старте поднимает `SocketServer` на `/tmp/frok.sock`.
-2. Клиент пишет строку → сервер парсит её в `SoundCommand`.
-3. `SoundCommandHandler` выполняет команду (воспроизведение / stop).
+1. `AppDelegate` поднимает `SocketServer` на `/tmp/frok.sock` и `GlobalHotkeyManager`.
+2. IPC-клиент или hotkey → `SoundCommandHandler` / `SoundLibrary`.
+3. `SoundLibrary` воспроизводит preloaded buffer через `AVAudioEngine` + `AVAudioPlayerNode`.
 
 ## Текущий статус
 
@@ -107,43 +123,29 @@ FROK/
 |-----------|--------|
 | Menu bar app (без Dock-иконки) | ✅ |
 | Unix socket server | ✅ |
-| Парсинг протокола (`play` / `-stop` / имя) | ✅ |
-| Preload звуков из `~/Sounds/karabiner/` | ⬜ |
-| Воспроизведение через AVAudioEngine | ⬜ |
-| Concurrent play + global stop | ⬜ |
-| Разрешение macOS aliases | ⬜ |
-| FSEvents hot-reload каталога | ⬜ |
-| UI настроек (preview, список звуков) | ⬜ |
-| SMAppService / автозапуск при логине | ⬜ |
+| Парсинг протокола (`play` / `-stop` / alias) | ✅ |
+| Preload звуков в `AVAudioPCMBuffer` | ✅ |
+| Воспроизведение через `AVAudioEngine` | ✅ |
+| Concurrent play + global stop | ✅ |
+| Глобальные hotkey-и (hold-to-play) | ✅ |
+| Per-sound volume | ✅ |
+| UI настроек (preview, список, hotkey recorder) | ✅ |
+| SMAppService / launch at login | ✅ |
+| FSEvents hot-reload файлов на диске | ⬜ |
+| Более строгие права на socket (0600) | ⬜ |
 
 ## Roadmap
 
-- [ ] Preload `~/Sounds/karabiner` в `AVAudioPCMBuffer`, воспроизведение через `AVAudioEngine`
-- [ ] Concurrent playback + global `-stop`
-- [ ] Разрешение macOS aliases; mapping `enter_sniper_rifle_fire.mp3` → `sniper_rifle_fire`
-- [ ] FSEvents hot-reload без restart
-- [ ] Menu bar UI: статус, preview, список звуков
-- [ ] SMAppService для автозапуска
-
-Полный список must-have / nice-to-have — в разделе «Что важно сохранить» [AUDIO_DAEMON_SPEC.md](old_daemon/AUDIO_DAEMON_SPEC.md).
+- [ ] Mute всех звуков
+- [ ] Кроп, настройка длительности
+- [ ] Удаление щелчков (смягчить старт и стоп)
+- [ ] Выбор звука на нажатие любой клавиши
 
 ## Отладка
 
-Логи приложения доступны через **Console.app** — фильтр по subsystem `com.user.frok`.
+Логи — **Console.app**, фильтр по subsystem `com.user.frok`.
 
-Проверка, что сокет слушает:
-
-```bash
-ls -la /tmp/frok.sock
-echo "test" | nc -U /tmp/frok.sock
-```
-
-## Миграция со старого демона
-
-1. Остановить Node.js-демон: `./old_daemon/audio_daemon_control.sh stop`
-2. Обновить `SOCKET_PATH` в `play_sound.sh` на `/tmp/frok.sock` (уже сделано в репозитории).
-3. Запустить FROK.
-4. Karabiner-правила менять не нужно — только путь к скрипту.
+После отправки команды в сокет в логах появится строка вида `Received: play(name: "bonk")`.
 
 ## Лицензия
 
