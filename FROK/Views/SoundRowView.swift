@@ -62,7 +62,7 @@ struct SoundRowView: View {
     private var aliasField: some View {
         TextField("Alias", text: soundLibrary.aliasBinding(for: entry.id))
             .textFieldStyle(.roundedBorder)
-            .frame(width: 100)
+            .frame(width: 120)
     }
 
     private var hotkeyField: some View {
@@ -76,17 +76,17 @@ struct SoundRowView: View {
                 in: 0...1.5,
                 step: 0.05
             )
-            .frame(width: 160)
+            .frame(width: 130)
 
             HStack(spacing: 0) {
                 ForEach(volumeTicks, id: \.self) { tick in
                     Text("\(Int(tick * 100))")
-                        .font(.system(size: 9))
+                        .font(.system(size: 7))
                         .foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity)
                 }
             }
-            .frame(width: 160)
+            .frame(width: 130)
         }
     }
 
@@ -97,6 +97,7 @@ struct SoundRowView: View {
             Image(systemName: "trash")
         }
         .buttonStyle(.plain)
+        .padding(.horizontal, 8)
     }
 }
 

@@ -7,25 +7,25 @@ struct SettingsView: View {
     @Environment(MenuBarState.self) private var menuBarState
     @EnvironmentObject private var launchAtLogin: LaunchAtLoginManager
     @EnvironmentObject private var accessibilityPermission: AccessibilityPermissionManager
-    @State private var tableHeight: CGFloat = 0
     @State private var activeRecordingID: UUID?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             header
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
 
             if !accessibilityPermission.isTrusted {
                 accessibilityBanner
+                    .padding(.horizontal, 16)
                     .padding(.top, 8)
             }
 
             table
-
-            footer
+                .padding(.top, 16)
         }
-        .frame(minWidth: 480)
+        .frame(minWidth: 500)
         .fixedSize(horizontal: false, vertical: true)
-        .padding()
         .contentShape(Rectangle())
         .onTapGesture {
             activeRecordingID = nil
@@ -95,17 +95,24 @@ struct SettingsView: View {
         )
     }
 
-    var table: some View {
-        ScrollView(.vertical) {
-            tableContent
-                .onGeometryChange(for: CGFloat.self) { geometry in
-                    geometry.size.height
-                } action: { newHeight in
-                    tableHeight = newHeight
-                }
+    private var maxTableHeight: CGFloat {
+        guard let screenHeight = NSScreen.main?.visibleFrame.height else {
+            return .infinity
         }
-        .frame(height: tableHeight)
-        .padding(.vertical, 16)
+
+        var chrome: CGFloat = 76
+        if !accessibilityPermission.isTrusted {
+            chrome += 80
+        }
+        return max(120, screenHeight - chrome)
+    }
+
+    var table: some View {
+        FloatingFooterScrollView(maxHeight: maxTableHeight) {
+            tableContent
+        } footer: {
+            footerBar
+        }
     }
 
     private var tableContent: some View {
@@ -119,29 +126,38 @@ struct SettingsView: View {
             }
             .frame(maxWidth: .infinity)
             .controlSize(.large)
-            .padding(.top, 8)
+            .padding(.vertical, 8)
         }
+        .padding(.horizontal, 16)
     }
 
     private var footer: some View {
         HStack(spacing: 12) {
             Toggle("Launch at login", isOn: launchAtLoginBinding)
                 .toggleStyle(.checkbox)
-            
+
             Spacer()
-            
+
             Text("Version \(appVersion)")
                 .foregroundStyle(.secondary)
                 .font(.caption)
-            
+
             Text("Loaded sounds: \(soundLibrary.formattedLoadedMemoryUsage)")
                 .foregroundStyle(.secondary)
                 .font(.caption)
-            
+
             Button("Exit") {
                 NSApplication.shared.terminate(nil)
             }
         }
+    }
+
+    private var footerBar: some View {
+        footer
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(.ultraThinMaterial)
     }
 
     private func openSoundPicker() {
@@ -154,6 +170,42 @@ struct SettingsView: View {
                 soundLibrary.addSounds(from: urls)
             }
         )
+    }
+}
+
+private struct FloatingFooterScrollView<Content: View, Footer: View>: View {
+    let maxHeight: CGFloat
+    @ViewBuilder let content: () -> Content
+    @ViewBuilder let footer: () -> Footer
+
+    @State private var contentHeight: CGFloat = 0
+    @State private var footerHeight: CGFloat = 0
+
+    private var scrollHeight: CGFloat {
+        min(contentHeight + footerHeight, maxHeight)
+    }
+
+    var body: some View {
+        ScrollView(.vertical) {
+            content()
+                .onGeometryChange(for: CGFloat.self) { geometry in
+                    geometry.size.height
+                } action: { newHeight in
+                    contentHeight = newHeight
+                }
+        }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            Color.clear.frame(height: footerHeight)
+        }
+        .frame(height: scrollHeight)
+        .overlay(alignment: .bottom) {
+            footer()
+                .onGeometryChange(for: CGFloat.self) { geometry in
+                    geometry.size.height
+                } action: { newHeight in
+                    footerHeight = newHeight
+                }
+        }
     }
 }
 
