@@ -14,9 +14,7 @@ struct FROKApp: App {
                 .environmentObject(accessibilityPermissionManager)
         } label: {
             Image("status_icon")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 40, height: 40)
+                .renderingMode(.template)
         }
         .menuBarExtraStyle(.window)
     }
