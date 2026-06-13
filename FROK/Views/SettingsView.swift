@@ -4,6 +4,7 @@ import UniformTypeIdentifiers
 
 struct SettingsView: View {
     @Environment(SoundLibrary.self) private var soundLibrary
+    @Environment(MenuBarState.self) private var menuBarState
     @EnvironmentObject private var launchAtLogin: LaunchAtLoginManager
     @EnvironmentObject private var accessibilityPermission: AccessibilityPermissionManager
     @State private var tableHeight: CGFloat = 0
@@ -144,14 +145,15 @@ struct SettingsView: View {
     }
 
     private func openSoundPicker() {
-        let panel = NSOpenPanel()
-        panel.allowsMultipleSelection = true
-        panel.canChooseDirectories = false
-        panel.canChooseFiles = true
-        panel.allowedContentTypes = [.audio, .mp3, .aiff, .wav]
-
-        guard panel.runModal() == .OK else { return }
-        soundLibrary.addSounds(from: panel.urls)
+        menuBarState.beginFilePick()
+        SoundFilePicker.pick(
+            onDisplayed: { menuBarState.notifyPickerDidOpen() },
+            onCompletion: { urls in
+                menuBarState.endFilePick()
+                guard let urls else { return }
+                soundLibrary.addSounds(from: urls)
+            }
+        )
     }
 }
 
@@ -183,6 +185,7 @@ struct SettingsView: View {
     
     SettingsView()
         .environment(SoundLibrary(previewEntries: [entry, entry2, entry3]))
+        .environment(MenuBarState())
         .environmentObject(LaunchAtLoginManager.shared)
         .environmentObject(AccessibilityPermissionManager.shared)
 }
