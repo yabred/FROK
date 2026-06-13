@@ -126,13 +126,15 @@ struct HotkeyDisplayView: View {
     let hotkey: SoundHotkey
 
     var body: some View {
-        HStack(spacing: 2) {
-            ForEach(hotkey.orderedModifierSymbols, id: \.self) { symbol in
-                Image(systemName: symbol)
-                    .font(.system(size: 11, weight: .medium))
+        HStack(spacing: 0) {
+            Group {
+                ForEach(hotkey.orderedModifierSymbols, id: \.self) { symbol in
+                    Image(systemName: symbol)
+                }
+                Text(hotkey.keyDisplayName)
             }
-            Text(hotkey.keyDisplayName)
-                .font(.system(size: 12, weight: .medium))
+            .minimumScaleFactor(0.5)
+            .font(.system(size: 10, weight: .medium))
         }
     }
 }

@@ -14,7 +14,6 @@ struct SoundRowView: View {
             playIndicator
             aliasField
             hotkeyField
-            pathLabel
             volumeControl
             deleteButton
         }
@@ -25,8 +24,7 @@ struct SoundRowView: View {
         Group {
             switch entry.loadStatus {
             case .loaded:
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundStyle(.green)
+                Color(.clear)
             case .failed:
                 Image(systemName: "xmark.circle.fill")
                     .foregroundStyle(.red)
@@ -42,8 +40,8 @@ struct SoundRowView: View {
         Button {
             soundLibrary.togglePlayback(id: entry.id)
         } label: {
-            Circle()
-                .fill(playIndicatorColor)
+            Image(systemName: entry.playbackState == .playing ? "stop.fill" : "play.fill")
+                .foregroundStyle(playIndicatorColor)
                 .frame(width: 16, height: 16)
         }
         .buttonStyle(.plain)
@@ -55,7 +53,7 @@ struct SoundRowView: View {
         case .idle:
             .secondary
         case .playing:
-            .green
+            .blue
         case .stoppedFlash:
             .red
         }
@@ -71,27 +69,12 @@ struct SoundRowView: View {
         HotkeyRecorderField(entryID: entry.id, activeRecordingID: $activeRecordingID)
     }
 
-    private var pathLabel: some View {
-        Text(displayPath)
-            .font(.caption)
-            .foregroundStyle(.secondary)
-            .lineLimit(1)
-            .frame(width: 140, alignment: .leading)
-    }
-
-    private var displayPath: String {
-        if let url = soundLibrary.resolvedURL(for: entry.id) {
-            return SoundPathFormatting.truncatedPath(url)
-        }
-        return "..."
-    }
-
     private var volumeControl: some View {
         VStack(spacing: 2) {
             Slider(
                 value: soundLibrary.volumeBinding(for: entry.id),
-                in: 0 ... 1.5,
-                step: 0.01
+                in: 0...1.5,
+                step: 0.05
             )
             .frame(width: 160)
 
@@ -115,4 +98,20 @@ struct SoundRowView: View {
         }
         .buttonStyle(.plain)
     }
+}
+
+#Preview {
+    let entry = SoundEntry(
+        alias: "Applause",
+        bookmarkData: Data(),
+        volume: 0.75,
+        hotkey: SoundHotkey(keyCode: 49, carbonModifiers: 256),
+        loadStatus: .loaded,
+        playbackState: .idle
+    )
+
+    SoundRowView(entry: entry, activeRecordingID: .constant(nil))
+        .environment(SoundLibrary(previewEntries: [entry]))
+        .padding()
+        .frame(width: 680)
 }

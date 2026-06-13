@@ -27,8 +27,10 @@ final class SoundLibrary {
 
     private var activePlaybacks: [ActivePlayback] = []
     private var stopFlashTasks: [UUID: Task<Void, Never>] = [:]
+    private let persistenceEnabled: Bool
 
     init() {
+        persistenceEnabled = true
         let stored = SoundPersistence.load()
         entries = stored.map(SoundEntry.init(stored:))
         for entry in entries {
@@ -45,6 +47,13 @@ final class SoundLibrary {
             }
         }
     }
+
+    #if DEBUG
+    init(previewEntries: [SoundEntry]) {
+        persistenceEnabled = false
+        entries = previewEntries
+    }
+    #endif
 
     func addSounds(from urls: [URL]) {
         var existingPaths = Set(resolvedURLs.values.map(\.path))
@@ -389,7 +398,7 @@ final class SoundLibrary {
         entries[index].playbackState = .stoppedFlash
 
         stopFlashTasks[entryID] = Task {
-            try? await Task.sleep(for: .milliseconds(200))
+            try? await Task.sleep(for: .milliseconds(100))
             guard !Task.isCancelled else { return }
             guard let currentIndex = entries.firstIndex(where: { $0.id == entryID }) else { return }
             if !isPlaying(entryID: entryID) {
@@ -427,6 +436,7 @@ final class SoundLibrary {
     }
 
     private func persist() {
+        guard persistenceEnabled else { return }
         SoundPersistence.save(entries.map(\.stored))
     }
 }

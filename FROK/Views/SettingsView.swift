@@ -22,7 +22,7 @@ struct SettingsView: View {
 
             footer
         }
-        .frame(minWidth: 720)
+        .frame(minWidth: 480)
         .fixedSize(horizontal: false, vertical: true)
         .padding()
         .contentShape(Rectangle())
@@ -104,7 +104,7 @@ struct SettingsView: View {
                 }
         }
         .frame(height: tableHeight)
-        .padding(.top, 16)
+        .padding(.vertical, 16)
     }
 
     private var tableContent: some View {
@@ -156,8 +156,33 @@ struct SettingsView: View {
 }
 
 #Preview {
+    let entry = SoundEntry(
+        alias: "Applause",
+        bookmarkData: Data(),
+        volume: 0.75,
+        hotkey: SoundHotkey(keyCode: 49, carbonModifiers: 256),
+        loadStatus: .loaded,
+        playbackState: .idle
+    )
+    let entry2 = SoundEntry(
+        alias: "Bonk",
+        bookmarkData: Data(),
+        volume: 0.3,
+        hotkey: SoundHotkey(keyCode: 43, carbonModifiers: 6912),
+        loadStatus: .loading,
+        playbackState: .playing
+    )
+    let entry3 = SoundEntry(
+        alias: "Hello",
+        bookmarkData: Data(),
+        volume: 1.5,
+        hotkey: SoundHotkey(keyCode: 49, carbonModifiers: 4608),
+        loadStatus: .failed("fail"),
+        playbackState: .stoppedFlash
+    )
+    
     SettingsView()
-        .environment(SoundLibrary())
+        .environment(SoundLibrary(previewEntries: [entry, entry2, entry3]))
         .environmentObject(LaunchAtLoginManager.shared)
         .environmentObject(AccessibilityPermissionManager.shared)
 }

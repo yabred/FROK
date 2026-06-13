@@ -53,11 +53,3 @@ extension SoundEntry {
         )
     }
 }
-
-enum SoundPathFormatting {
-    static func truncatedPath(_ url: URL, maxLength: Int = 30) -> String {
-        let path = url.path
-        guard path.count > maxLength else { return path }
-        return "..." + path.suffix(maxLength)
-    }
-}

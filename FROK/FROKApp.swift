@@ -7,11 +7,16 @@ struct FROKApp: App {
     @ObservedObject private var accessibilityPermissionManager = AccessibilityPermissionManager.shared
 
     var body: some Scene {
-        MenuBarExtra("FROK", systemImage: "speaker.wave.2.fill") {
+        MenuBarExtra {
             SettingsView()
                 .environment(appDelegate.soundLibrary)
                 .environmentObject(launchAtLoginManager)
                 .environmentObject(accessibilityPermissionManager)
+        } label: {
+            Image("status_icon")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 40, height: 40)
         }
         .menuBarExtraStyle(.window)
     }

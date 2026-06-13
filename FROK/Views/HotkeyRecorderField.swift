@@ -21,19 +21,17 @@ struct HotkeyRecorderField: View {
 
     var body: some View {
         ZStack(alignment: .trailing) {
-            HStack(spacing: 4) {
+            HStack(alignment: .center, spacing: 4) {
                 if let hotkey {
                     HotkeyDisplayView(hotkey: hotkey)
                 } else if !isRecording {
                     Text("Record Key")
                         .foregroundStyle(.secondary)
                 }
-
-                Spacer(minLength: 0)
             }
             .padding(.leading, 6)
             .padding(.trailing, hotkey == nil ? 6 : 28)
-            .frame(width: 140, height: 22)
+            .frame(width: 100, height: 24)
             .background {
                 RoundedRectangle(cornerRadius: 5)
                     .fill(Color(nsColor: .textBackgroundColor))
@@ -42,7 +40,7 @@ struct HotkeyRecorderField: View {
                 RoundedRectangle(cornerRadius: 5)
                     .strokeBorder(borderColor, lineWidth: borderWidth)
             }
-            .contentShape(RoundedRectangle(cornerRadius: 5))
+            .contentShape(RoundedRectangle(cornerRadius: 7))
             .highPriorityGesture(
                 TapGesture().onEnded {
                     activeRecordingID = entryID
