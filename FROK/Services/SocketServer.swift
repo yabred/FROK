@@ -141,6 +141,6 @@ final class SocketServer {
 
         let line = String(data: buffer, encoding: .utf8) ?? ""
         let soundCommand = SoundCommand(rawLine: line)
-        commandHandler.handle(soundCommand)
+        commandHandler.handle(soundCommand, rawLine: line.trimmingCharacters(in: .newlines))
     }
 }

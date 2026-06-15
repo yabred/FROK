@@ -172,6 +172,20 @@ final class SoundLibrary {
         }
     }
 
+    func aliasThatWouldPlay(for command: SoundCommand) -> String? {
+        switch command {
+        case .stopAll:
+            return nil
+        case .playDefault:
+            return entries.first(where: { $0.loadStatus == .loaded })?.alias
+        case .play(let name):
+            if let entry = entries.first(where: { $0.alias == name && $0.loadStatus == .loaded }) {
+                return entry.alias
+            }
+            return entries.first(where: { $0.loadStatus == .loaded })?.alias
+        }
+    }
+
     func stopAll() {
         let entryIDs = Set(activePlaybacks.map(\.entryID))
         for entryID in entryIDs {

@@ -4,7 +4,8 @@ import OSLog
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     let soundLibrary = SoundLibrary()
-    private lazy var commandHandler = SoundCommandHandler(soundLibrary: soundLibrary)
+    let eventLogStore = EventLogStore()
+    private lazy var commandHandler = SoundCommandHandler(soundLibrary: soundLibrary, eventLog: eventLogStore)
     private var socketServer: SocketServer?
     private var hotkeyManager: GlobalHotkeyManager?
 
@@ -13,7 +14,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             LaunchAtLoginManager.shared.configureDefaultIfNeeded()
         }
 
-        hotkeyManager = GlobalHotkeyManager(soundLibrary: soundLibrary)
+        hotkeyManager = GlobalHotkeyManager(soundLibrary: soundLibrary, eventLog: eventLogStore)
         soundLibrary.onHotkeysChanged = { [weak self] in
             Task { @MainActor in
                 guard let self else { return }

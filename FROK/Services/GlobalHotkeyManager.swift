@@ -5,6 +5,7 @@ import OSLog
 
 final class GlobalHotkeyManager: @unchecked Sendable {
     private let soundLibrary: SoundLibrary
+    private let eventLog: EventLogStore
     private var hotkeyMap: [SoundHotkey: UUID] = [:]
     private var keyCodeToHotkeys: [UInt16: [SoundHotkey]] = [:]
     private var heldEntryIDs: Set<UUID> = []
@@ -13,8 +14,9 @@ final class GlobalHotkeyManager: @unchecked Sendable {
     private var runLoopSource: CFRunLoopSource?
     private let lock = NSLock()
 
-    init(soundLibrary: SoundLibrary) {
+    init(soundLibrary: SoundLibrary, eventLog: EventLogStore) {
         self.soundLibrary = soundLibrary
+        self.eventLog = eventLog
     }
 
     func setRecordingPaused(_ paused: Bool) {
@@ -156,6 +158,12 @@ final class GlobalHotkeyManager: @unchecked Sendable {
         lock.unlock()
 
         guard !alreadyHeld else { return }
+
+        if let entry = soundLibrary.entries.first(where: { $0.id == entryID }),
+           let hotkey = entry.hotkey {
+            eventLog.logHotkey(hotkey: hotkey, soundAlias: entry.alias)
+        }
+
         soundLibrary.keyDownPlay(id: entryID)
     }
 

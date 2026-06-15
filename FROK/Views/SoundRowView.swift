@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SoundRowView: View {
     @Environment(SoundLibrary.self) private var soundLibrary
+    @Environment(EventLogStore.self) private var eventLog
 
     let entry: SoundEntry
     @Binding var activeRecordingID: UUID?
@@ -38,6 +39,8 @@ struct SoundRowView: View {
 
     private var playIndicator: some View {
         Button {
+            let isStop = entry.playbackState == .playing
+            eventLog.logUI(soundAlias: entry.alias, isStop: isStop)
             soundLibrary.togglePlayback(id: entry.id)
         } label: {
             Image(systemName: entry.playbackState == .playing ? "stop.fill" : "play.fill")
@@ -113,6 +116,7 @@ struct SoundRowView: View {
 
     SoundRowView(entry: entry, activeRecordingID: .constant(nil))
         .environment(SoundLibrary(previewEntries: [entry]))
+        .environment(EventLogStore())
         .padding()
         .frame(width: 680)
 }

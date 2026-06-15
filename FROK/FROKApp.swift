@@ -12,6 +12,7 @@ struct FROKApp: App {
         MenuBarExtra {
             SettingsView()
                 .environment(appDelegate.soundLibrary)
+                .environment(appDelegate.eventLogStore)
                 .environment(menuBarState)
                 .environmentObject(launchAtLoginManager)
                 .environmentObject(accessibilityPermissionManager)

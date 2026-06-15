@@ -8,6 +8,7 @@ struct SettingsView: View {
     @EnvironmentObject private var launchAtLogin: LaunchAtLoginManager
     @EnvironmentObject private var accessibilityPermission: AccessibilityPermissionManager
     @State private var activeRecordingID: UUID?
+    @State private var isLogPanelPresented = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -146,6 +147,12 @@ struct SettingsView: View {
                 .foregroundStyle(.secondary)
                 .font(.caption)
 
+            Button("Log") {
+                isLogPanelPresented.toggle()
+            }.popover(isPresented: $isLogPanelPresented) {
+                EventLogPanelView(isPresented: $isLogPanelPresented)
+            }
+
             Button("Exit") {
                 NSApplication.shared.terminate(nil)
             }
@@ -237,6 +244,7 @@ private struct FloatingFooterScrollView<Content: View, Footer: View>: View {
     
     SettingsView()
         .environment(SoundLibrary(previewEntries: [entry, entry2, entry3]))
+        .environment(EventLogStore())
         .environment(MenuBarState())
         .environmentObject(LaunchAtLoginManager.shared)
         .environmentObject(AccessibilityPermissionManager.shared)
