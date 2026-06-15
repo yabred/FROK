@@ -15,6 +15,7 @@ struct SoundRowView: View {
             playIndicator
             aliasField
             hotkeyField
+            playbackModeControl
             volumeControl
             deleteButton
         }
@@ -46,6 +47,7 @@ struct SoundRowView: View {
             Image(systemName: entry.playbackState == .playing ? "stop.fill" : "play.fill")
                 .foregroundStyle(playIndicatorColor)
                 .frame(width: 16, height: 16)
+                .padding(4)
         }
         .buttonStyle(.plain)
         .disabled(entry.loadStatus != .loaded)
@@ -72,6 +74,20 @@ struct SoundRowView: View {
         HotkeyRecorderField(entryID: entry.id, activeRecordingID: $activeRecordingID)
     }
 
+    private var playbackModeControl: some View {
+        Picker("Playback mode", selection: soundLibrary.playbackModeBinding(for: entry.id)) {
+            ForEach(SoundPlaybackMode.allCases, id: \.self) { mode in
+                Text(mode.label)
+//                    .font(.system(size: 6))
+                    .tag(mode)
+            }
+        }
+        .pickerStyle(.segmented)
+        .labelsHidden()
+        .scaleEffect(CGSize(width: 0.75, height: 0.75))
+        .frame(maxWidth: 44)
+    }
+
     private var volumeControl: some View {
         VStack(spacing: 2) {
             Slider(
@@ -79,6 +95,7 @@ struct SoundRowView: View {
                 in: 0...1.5,
                 step: 0.05
             )
+            .foregroundStyle(.primary.opacity(0.1))
             .frame(width: 130)
 
             HStack(spacing: 0) {
@@ -118,5 +135,5 @@ struct SoundRowView: View {
         .environment(SoundLibrary(previewEntries: [entry]))
         .environment(EventLogStore())
         .padding()
-        .frame(width: 680)
+        .frame(width: 840)
 }

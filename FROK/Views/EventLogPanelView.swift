@@ -137,16 +137,25 @@ private struct EventLogRowView: View {
     let timestampFormatter: DateFormatter
 
     var body: some View {
-        HStack(alignment: .top, spacing: 8) {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
             sourceIcon
                 .frame(width: 18)
 
-            VStack(alignment: .leading, spacing: 4) {
-                Text(timestampFormatter.string(from: entry.timestamp))
-                    .font(.system(size: 11, design: .monospaced))
-                    .foregroundStyle(.secondary)
-
-                detailLine
+            ViewThatFits(in: .horizontal) {
+                HStack(alignment: .firstTextBaseline, spacing: 4) {
+                    Text(timestampFormatter.string(from: entry.timestamp))
+                        .font(.system(size: 11, design: .monospaced))
+                        .foregroundStyle(.secondary)
+                    
+                    detailLine
+                }
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(timestampFormatter.string(from: entry.timestamp))
+                        .font(.system(size: 11, design: .monospaced))
+                        .foregroundStyle(.secondary)
+                    
+                    detailLine
+                }
             }
 
             Spacer(minLength: 0)
@@ -279,6 +288,8 @@ private struct EventLogPanelPreview: View {
                 store.logSocket(message: "bonk", soundAlias: "Bonk")
                 store.logSocket(message: "-stop", soundAlias: nil, isStop: true)
                 store.logUI(soundAlias: "Applause")
+                store.logSocket(message: "veryverylongbonk", soundAlias: "veryverylongbonk")
+                store.logSocket(message: "ultra_very_super_long_bonk", soundAlias: "ultra_very_super_long_bonk")
             }
     }
 }

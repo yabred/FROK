@@ -31,6 +31,7 @@
 		A10000010000000000000073 /* MenuBarExtraAccess in Frameworks */ = {isa = PBXBuildFile; productRef = A10000010000000000000071 /* MenuBarExtraAccess */; };
 		A10000010000000000000075 /* EventLogStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000010000000000000074 /* EventLogStore.swift */; };
 		A10000010000000000000077 /* EventLogPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000010000000000000076 /* EventLogPanelView.swift */; };
+		A10000010000000000000079 /* SoundPlaybackMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000010000000000000078 /* SoundPlaybackMode.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,6 +60,7 @@
 		A10000010000000000000072 /* SoundFilePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundFilePicker.swift; sourceTree = "<group>"; };
 		A10000010000000000000074 /* EventLogStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventLogStore.swift; sourceTree = "<group>"; };
 		A10000010000000000000076 /* EventLogPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventLogPanelView.swift; sourceTree = "<group>"; };
+		A10000010000000000000078 /* SoundPlaybackMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundPlaybackMode.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +105,7 @@
 				A10000010000000000000066 /* SoundHotkey.swift */,
 				A10000010000000000000060 /* SoundLoadStatus.swift */,
 				A10000010000000000000061 /* SoundPlaybackState.swift */,
+				A10000010000000000000078 /* SoundPlaybackMode.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -241,6 +244,7 @@
 				A1000001000000000000006F /* SoundFilePicker.swift in Sources */,
 				A10000010000000000000075 /* EventLogStore.swift in Sources */,
 				A10000010000000000000077 /* EventLogPanelView.swift in Sources */,
+				A10000010000000000000079 /* SoundPlaybackMode.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -66,7 +66,8 @@ final class SoundLibrary {
             do {
                 let bookmarkData = try SoundBookmark.create(from: url)
                 let alias = uniqueAlias(for: resolved.deletingPathExtension().lastPathComponent)
-                let entry = SoundEntry(alias: alias, bookmarkData: bookmarkData)
+                let playbackMode = Self.defaultPlaybackMode(for: resolved)
+                let entry = SoundEntry(alias: alias, bookmarkData: bookmarkData, playbackMode: playbackMode)
                 entries.append(entry)
                 existingPaths.insert(resolved.path)
                 persist()
@@ -131,11 +132,27 @@ final class SoundLibrary {
     }
 
     func keyDownPlay(id: UUID) {
-        playEntry(id: id)
+        guard let entry = entries.first(where: { $0.id == id }) else { return }
+
+        switch entry.playbackMode {
+        case .oneShot:
+            playEntry(id: id)
+        case .hold:
+            stopPlaybacks(for: id, manualFromUI: false)
+            playEntry(id: id)
+        }
     }
 
     func keyUpStop(id: UUID) {
+        guard let entry = entries.first(where: { $0.id == id }) else { return }
+        guard entry.playbackMode == .hold else { return }
         stopPlaybacks(for: id, manualFromUI: false)
+    }
+
+    func updatePlaybackMode(id: UUID, mode: SoundPlaybackMode) {
+        guard let index = entries.firstIndex(where: { $0.id == id }) else { return }
+        entries[index].playbackMode = mode
+        persist()
     }
 
     func isHotkeyAvailable(_ hotkey: SoundHotkey, excluding id: UUID) -> Bool {
@@ -234,6 +251,17 @@ final class SoundLibrary {
             },
             set: { [self] newValue in
                 updateHotkey(id: id, hotkey: newValue)
+            }
+        )
+    }
+
+    func playbackModeBinding(for id: UUID) -> Binding<SoundPlaybackMode> {
+        Binding(
+            get: { [self] in
+                entries.first(where: { $0.id == id })?.playbackMode ?? .oneShot
+            },
+            set: { [self] newValue in
+                updatePlaybackMode(id: id, mode: newValue)
             }
         )
     }
@@ -423,6 +451,18 @@ final class SoundLibrary {
     }
 
     // MARK: - Helpers
+
+    private static let oneShotMaxDuration: TimeInterval = 3
+
+    nonisolated private static func defaultPlaybackMode(for url: URL) -> SoundPlaybackMode {
+        guard let duration = audioDuration(of: url) else { return .hold }
+        return duration <= oneShotMaxDuration ? .oneShot : .hold
+    }
+
+    nonisolated private static func audioDuration(of url: URL) -> TimeInterval? {
+        guard let file = try? AVAudioFile(forReading: url) else { return nil }
+        return Double(file.length) / file.processingFormat.sampleRate
+    }
 
     private static let byteCountFormatter: ByteCountFormatter = {
         let formatter = ByteCountFormatter()

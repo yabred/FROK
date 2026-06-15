@@ -25,7 +25,7 @@ struct SettingsView: View {
             table
                 .padding(.top, 16)
         }
-        .frame(minWidth: 500)
+        .frame(minWidth: 550)
         .fixedSize(horizontal: false, vertical: true)
         .contentShape(Rectangle())
         .onTapGesture {
