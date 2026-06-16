@@ -55,12 +55,9 @@ struct SoundRowView: View {
 
     private var playIndicatorColor: Color {
         switch entry.playbackState {
-        case .idle:
-            .secondary
-        case .playing:
-            .blue
-        case .stoppedFlash:
-            .red
+        case .idle: .secondary
+        case .playing: .accentColor
+        case .stoppedFlash: .red
         }
     }
 
@@ -95,7 +92,6 @@ struct SoundRowView: View {
                 in: 0...1.5,
                 step: 0.05
             )
-            .foregroundStyle(.primary.opacity(0.1))
             .frame(width: 130)
 
             HStack(spacing: 0) {

@@ -44,11 +44,13 @@ struct SettingsView: View {
         HStack {
             Text("FRO")
                 .font(.title)
-                .fontWeight(.bold) +
+                .fontWeight(.bold)
+                .foregroundStyle(Color.accentColor) +
             Text("g") +
             Text(" K")
                 .font(.title)
-                .fontWeight(.bold) +
+                .fontWeight(.bold)
+                .foregroundStyle(Color.accentColor) +
             Text("eyboard")
             Spacer()
         }
