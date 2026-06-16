@@ -7,6 +7,7 @@ struct SettingsView: View {
     @Environment(MenuBarState.self) private var menuBarState
     @EnvironmentObject private var launchAtLogin: LaunchAtLoginManager
     @EnvironmentObject private var accessibilityPermission: AccessibilityPermissionManager
+    @FocusState private var focusedAliasID: UUID?
     @State private var activeRecordingID: UUID?
     @State private var isLogPanelPresented = false
 
@@ -30,10 +31,22 @@ struct SettingsView: View {
         .contentShape(Rectangle())
         .onTapGesture {
             activeRecordingID = nil
+            focusedAliasID = nil
+        }
+        .onExitCommand {
+            focusedAliasID = nil
         }
         .onAppear {
             launchAtLogin.refreshStatus()
             accessibilityPermission.refreshStatus()
+        }
+        .onDisappear {
+            focusedAliasID = nil
+        }
+        .onChange(of: menuBarState.isPresented) { _, isPresented in
+            if !isPresented {
+                focusedAliasID = nil
+            }
         }
         .onChange(of: activeRecordingID) { _, newValue in
             soundLibrary.onHotkeyRecordingChanged?(newValue != nil)
@@ -121,7 +134,11 @@ struct SettingsView: View {
     private var tableContent: some View {
         VStack(alignment: .leading, spacing: 0) {
             ForEach(soundLibrary.entries) { entry in
-                SoundRowView(entry: entry, activeRecordingID: $activeRecordingID)
+                SoundRowView(
+                    entry: entry,
+                    activeRecordingID: $activeRecordingID,
+                    focusedAliasID: $focusedAliasID
+                )
             }
 
             Button("Add new sound") {

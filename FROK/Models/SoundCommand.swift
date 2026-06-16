@@ -1,6 +1,7 @@
 import Foundation
 
 enum SoundCommand: Equatable, CustomStringConvertible {
+    case ignore
     case playDefault
     case stopAll
     case play(name: String)
@@ -8,7 +9,9 @@ enum SoundCommand: Equatable, CustomStringConvertible {
     init(rawLine: String) {
         let trimmed = rawLine.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        if trimmed.isEmpty || trimmed == "play" {
+        if trimmed.isEmpty {
+            self = .ignore
+        } else if trimmed == "play" {
             self = .playDefault
         } else if trimmed == "-stop" {
             self = .stopAll
@@ -19,6 +22,8 @@ enum SoundCommand: Equatable, CustomStringConvertible {
 
     var description: String {
         switch self {
+        case .ignore:
+            "ignore"
         case .playDefault:
             "playDefault"
         case .stopAll:

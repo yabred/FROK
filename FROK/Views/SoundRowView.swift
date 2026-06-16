@@ -6,6 +6,7 @@ struct SoundRowView: View {
 
     let entry: SoundEntry
     @Binding var activeRecordingID: UUID?
+    var focusedAliasID: FocusState<UUID?>.Binding
 
     private let volumeTicks: [Double] = [0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5]
 
@@ -65,6 +66,7 @@ struct SoundRowView: View {
         TextField("Alias", text: soundLibrary.aliasBinding(for: entry.id))
             .textFieldStyle(.roundedBorder)
             .frame(width: 120)
+            .focused(focusedAliasID, equals: entry.id)
     }
 
     private var hotkeyField: some View {
@@ -118,18 +120,30 @@ struct SoundRowView: View {
 }
 
 #Preview {
-    let entry = SoundEntry(
-        alias: "Applause",
-        bookmarkData: Data(),
-        volume: 0.75,
-        hotkey: SoundHotkey(keyCode: 49, carbonModifiers: 256),
-        loadStatus: .loaded,
-        playbackState: .idle
-    )
+    struct PreviewContainer: View {
+        @FocusState private var focusedAliasID: UUID?
 
-    SoundRowView(entry: entry, activeRecordingID: .constant(nil))
-        .environment(SoundLibrary(previewEntries: [entry]))
-        .environment(EventLogStore())
-        .padding()
-        .frame(width: 840)
+        var body: some View {
+            let entry = SoundEntry(
+                alias: "Applause",
+                bookmarkData: Data(),
+                volume: 0.75,
+                hotkey: SoundHotkey(keyCode: 49, carbonModifiers: 256),
+                loadStatus: .loaded,
+                playbackState: .idle
+            )
+
+            SoundRowView(
+                entry: entry,
+                activeRecordingID: .constant(nil),
+                focusedAliasID: $focusedAliasID
+            )
+            .environment(SoundLibrary(previewEntries: [entry]))
+            .environment(EventLogStore())
+            .padding()
+            .frame(width: 840)
+        }
+    }
+
+    return PreviewContainer()
 }

@@ -168,16 +168,13 @@ final class SoundLibrary {
     }
 
     func play(alias: String) {
-        if let entry = entries.first(where: { $0.alias == alias && $0.loadStatus == .loaded }) {
-            playEntry(id: entry.id)
-            return
-        }
-
-        if let fallback = entries.first(where: { $0.loadStatus == .loaded }) {
-            playEntry(id: fallback.id)
-            Logger.frok.notice("Sound \"\(alias, privacy: .public)\" not found, playing fallback")
-        } else {
-            Logger.frok.error("No loaded sounds available for alias \"\(alias, privacy: .public)\"")
+        switch resolveAliasMatch(alias) {
+        case .loaded(let entryID):
+            playEntry(id: entryID)
+        case .loading(let entryID):
+            Task { await playWhenLoaded(entryID: entryID) }
+        case .none:
+            Logger.frok.error("Sound not found for alias \"\(alias, privacy: .public)\"")
         }
     }
 
@@ -191,15 +188,12 @@ final class SoundLibrary {
 
     func aliasThatWouldPlay(for command: SoundCommand) -> String? {
         switch command {
-        case .stopAll:
+        case .ignore, .stopAll:
             return nil
         case .playDefault:
             return entries.first(where: { $0.loadStatus == .loaded })?.alias
         case .play(let name):
-            if let entry = entries.first(where: { $0.alias == name && $0.loadStatus == .loaded }) {
-                return entry.alias
-            }
-            return entries.first(where: { $0.loadStatus == .loaded })?.alias
+            return entry(matchingAlias: name)?.alias
         }
     }
 
@@ -451,6 +445,48 @@ final class SoundLibrary {
     }
 
     // MARK: - Helpers
+
+    private enum AliasMatch {
+        case loaded(UUID)
+        case loading(UUID)
+    }
+
+    private func entry(matchingAlias alias: String) -> SoundEntry? {
+        if let entry = entries.first(where: { $0.alias == alias }) {
+            return entry
+        }
+        return entries.first(where: { $0.alias.caseInsensitiveCompare(alias) == .orderedSame })
+    }
+
+    private func resolveAliasMatch(_ alias: String) -> AliasMatch? {
+        guard let entry = entry(matchingAlias: alias) else { return nil }
+
+        switch entry.loadStatus {
+        case .loaded:
+            return .loaded(entry.id)
+        case .loading:
+            return .loading(entry.id)
+        case .failed:
+            return nil
+        }
+    }
+
+    private func playWhenLoaded(entryID: UUID) async {
+        for _ in 0..<50 {
+            guard !Task.isCancelled else { return }
+            guard let entry = entries.first(where: { $0.id == entryID }) else { return }
+
+            switch entry.loadStatus {
+            case .loaded:
+                playEntry(id: entryID)
+                return
+            case .failed:
+                return
+            case .loading:
+                try? await Task.sleep(for: .milliseconds(100))
+            }
+        }
+    }
 
     private static let oneShotMaxDuration: TimeInterval = 3
 

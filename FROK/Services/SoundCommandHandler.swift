@@ -18,6 +18,8 @@ final class SoundCommandHandler {
             let soundAlias = soundLibrary.aliasThatWouldPlay(for: command)
 
             switch command {
+            case .ignore:
+                eventLog.logSocket(message: rawLine, soundAlias: nil)
             case .playDefault:
                 soundLibrary.playDefault()
                 eventLog.logSocket(message: rawLine, soundAlias: soundAlias)
