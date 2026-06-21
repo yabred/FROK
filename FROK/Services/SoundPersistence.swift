@@ -4,8 +4,18 @@ enum SoundPersistence {
     private static let storageKey = "storedSounds"
 
     static func load() -> [StoredSoundEntry] {
-        guard let data = UserDefaults.standard.data(forKey: storageKey) else { return [] }
-        return (try? JSONDecoder().decode([StoredSoundEntry].self, from: data)) ?? []
+        let stored: [StoredSoundEntry]
+        if let data = UserDefaults.standard.data(forKey: storageKey) {
+            stored = (try? JSONDecoder().decode([StoredSoundEntry].self, from: data)) ?? []
+        } else {
+            stored = []
+        }
+
+        let seeded = BundledSounds.makeStoredEntries(existing: stored)
+        if seeded.count != stored.count {
+            save(seeded)
+        }
+        return seeded
     }
 
     static func save(_ entries: [StoredSoundEntry]) {

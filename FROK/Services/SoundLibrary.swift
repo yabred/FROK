@@ -302,6 +302,14 @@ final class SoundLibrary {
             throw SoundBookmark.Error.resolveFailed
         }
 
+        if let resourceName = entry.bundledResourceName {
+            guard let url = Bundle.main.url(forResource: resourceName, withExtension: "mp3") else {
+                throw SoundBookmark.Error.resolveFailed
+            }
+            resolvedURLs[entryID] = url
+            return url
+        }
+
         let url = try SoundBookmark.resolve(entry.bookmarkData)
         guard url.startAccessingSecurityScopedResource() else {
             throw SoundBookmark.Error.resolveFailed

@@ -37,6 +37,8 @@
 		A10000010000000000000082 /* SocketClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001000000000000007F /* SocketClient.swift */; };
 		A10000010000000000000083 /* FROKSocketPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001000000000000007A /* FROKSocketPath.swift */; };
 		A10000010000000000000088 /* frok in Copy Files */ = {isa = PBXBuildFile; fileRef = A10000010000000000000080 /* frok */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		A10000010000000000000090 /* frog.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A10000010000000000000091 /* frog.mp3 */; };
+		A10000010000000000000093 /* BundledSounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000010000000000000094 /* BundledSounds.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -70,6 +72,8 @@
 		A1000001000000000000007E /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		A1000001000000000000007F /* SocketClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketClient.swift; sourceTree = "<group>"; };
 		A10000010000000000000080 /* frok */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = frok; sourceTree = BUILT_PRODUCTS_DIR; };
+		A10000010000000000000091 /* frog.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = frog.mp3; sourceTree = "<group>"; };
+		A10000010000000000000094 /* BundledSounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundledSounds.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,6 +137,7 @@
 				A1000001000000000000007C /* Shared */,
 				A10000010000000000000023 /* Services */,
 				A10000010000000000000024 /* Views */,
+				A10000010000000000000092 /* Resources */,
 				A10000010000000000000057 /* Assets.xcassets */,
 				A10000010000000000000058 /* Info.plist */,
 			);
@@ -148,6 +153,7 @@
 				A10000010000000000000060 /* SoundLoadStatus.swift */,
 				A10000010000000000000061 /* SoundPlaybackState.swift */,
 				A10000010000000000000078 /* SoundPlaybackMode.swift */,
+				A10000010000000000000094 /* BundledSounds.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -205,6 +211,14 @@
 				A10000010000000000000080 /* frok */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		A10000010000000000000092 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A10000010000000000000091 /* frog.mp3 */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -294,6 +308,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A10000010000000000000017 /* Assets.xcassets in Resources */,
+				A10000010000000000000090 /* frog.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -315,6 +330,7 @@
 				A10000010000000000000019 /* SoundLoadStatus.swift in Sources */,
 				A1000001000000000000001A /* SoundPlaybackState.swift in Sources */,
 				A1000001000000000000001B /* SoundEntry.swift in Sources */,
+				A10000010000000000000093 /* BundledSounds.swift in Sources */,
 				A1000001000000000000001C /* SoundPersistence.swift in Sources */,
 				A1000001000000000000001D /* SoundLibrary.swift in Sources */,
 				A1000001000000000000001E /* SoundRowView.swift in Sources */,
