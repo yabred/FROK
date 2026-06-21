@@ -2,6 +2,7 @@ import AppKit
 import Carbon
 import SwiftUI
 
+@MainActor
 struct HotkeyRecorderField: View {
     @Environment(SoundLibrary.self) private var soundLibrary
 

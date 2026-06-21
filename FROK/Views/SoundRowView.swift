@@ -1,5 +1,6 @@
 import SwiftUI
 
+@MainActor
 struct SoundRowView: View {
     @Environment(SoundLibrary.self) private var soundLibrary
     @Environment(EventLogStore.self) private var eventLog

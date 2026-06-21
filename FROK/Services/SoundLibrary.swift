@@ -48,12 +48,10 @@ final class SoundLibrary {
         }
     }
 
-    #if DEBUG
     init(previewEntries: [SoundEntry]) {
         persistenceEnabled = false
         entries = previewEntries
     }
-    #endif
 
     func addSounds(from urls: [URL]) {
         var existingPaths = Set(resolvedURLs.values.map(\.path))

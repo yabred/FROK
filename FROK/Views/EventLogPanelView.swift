@@ -1,5 +1,6 @@
 import SwiftUI
 
+@MainActor
 struct EventLogPanelView: View {
     @Environment(EventLogStore.self) private var eventLog
     @Binding var isPresented: Bool
@@ -273,6 +274,7 @@ private struct EventLogRowView: View {
     EventLogPanelPreview()
 }
 
+@MainActor
 private struct EventLogPanelPreview: View {
     @State private var store = EventLogStore()
 

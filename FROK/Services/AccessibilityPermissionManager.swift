@@ -31,7 +31,7 @@ final class AccessibilityPermissionManager: ObservableObject {
         refreshStatus()
 
         pollTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { [weak self] _ in
-            Task { @MainActor in
+            Task { @MainActor [weak self] in
                 self?.refreshStatus()
             }
         }
@@ -41,7 +41,7 @@ final class AccessibilityPermissionManager: ObservableObject {
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            Task { @MainActor in
+            Task { @MainActor [weak self] in
                 self?.refreshStatus()
             }
         }
