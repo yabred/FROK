@@ -41,7 +41,7 @@ final class GlobalHotkeyManager: @unchecked Sendable {
 
         if hotkeyMap.isEmpty {
             removeTap()
-        } else if AXIsProcessTrusted() {
+        } else if AccessibilityPermissionManager.canCreateEventTap() {
             installTapIfNeeded()
         } else {
             removeTap()
@@ -57,7 +57,7 @@ final class GlobalHotkeyManager: @unchecked Sendable {
     private func installTapIfNeeded() {
         guard eventTap == nil else { return }
 
-        guard AXIsProcessTrusted() else {
+        guard AccessibilityPermissionManager.canCreateEventTap() else {
             Logger.frok.error("Accessibility permission required for global hotkeys")
             return
         }

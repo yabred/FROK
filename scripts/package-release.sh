@@ -64,6 +64,7 @@ if [[ -z "$APP_PATH" || ! -d "$APP_PATH" ]]; then
 fi
 
 echo "Packaging ${APP_PATH} -> ${ZIP_PATH}"
+codesign --force --deep --sign - "$APP_PATH"
 ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" "$ZIP_PATH"
 
 SHA256="$(shasum -a 256 "$ZIP_PATH" | awk '{print $1}')"

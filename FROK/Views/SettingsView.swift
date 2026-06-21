@@ -18,7 +18,7 @@ struct SettingsView: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
 
-            if !accessibilityPermission.isTrusted {
+            if accessibilityPermission.accessState != .granted {
                 accessibilityBanner
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
@@ -71,23 +71,39 @@ struct SettingsView: View {
     }
     
     private var accessibilityBanner: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .leading) {
-                Text("Accessibility access is required for global hotkeys.")
+        HStack(alignment: .top, spacing: 12) {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(accessibilityBannerTitle)
                     .foregroundStyle(.red)
                     .font(.callout)
+
+                Text(accessibilityBannerBody)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
                 Text(accessibilityPermission.bundlePathForDisplay)
                     .font(.caption2)
                     .foregroundStyle(.secondary)
                     .lineLimit(2)
+
+                Text("Bundle ID: \(accessibilityPermission.bundleIdentifierForDisplay)")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
             }
-            
+
             Spacer(minLength: 8)
 
-            Button("Open System Settings") {
-                accessibilityPermission.openAccessibilitySettings()
+            VStack(spacing: 8) {
+                Button("Open System Settings") {
+                    accessibilityPermission.openAccessibilitySettings()
+                }
+                .controlSize(.small)
+
+                Button("Restart FROK") {
+                    accessibilityPermission.restartApp()
+                }
+                .controlSize(.small)
             }
-            .controlSize(.small)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
@@ -98,6 +114,28 @@ struct SettingsView: View {
         .overlay {
             RoundedRectangle(cornerRadius: 8)
                 .strokeBorder(Color.red.opacity(0.5), lineWidth: 1)
+        }
+    }
+
+    private var accessibilityBannerTitle: String {
+        switch accessibilityPermission.accessState {
+        case .granted:
+            ""
+        case .notGranted:
+            "Accessibility access is required for global hotkeys."
+        case .stale:
+            "Accessibility permission is out of date for this build."
+        }
+    }
+
+    private var accessibilityBannerBody: String {
+        switch accessibilityPermission.accessState {
+        case .granted:
+            ""
+        case .notGranted:
+            "Enable FROK for the app path shown below, then restart FROK. Remove older FROK entries from the list if you previously built from Xcode."
+        case .stale:
+            "Remove FROK from Accessibility, quit FROK, open it again, re-enable access for the path below, then restart FROK."
         }
     }
 
@@ -118,7 +156,7 @@ struct SettingsView: View {
         }
 
         var chrome: CGFloat = 76
-        if !accessibilityPermission.isTrusted {
+        if accessibilityPermission.accessState != .granted {
             chrome += 80
         }
         return max(120, screenHeight - chrome)
@@ -208,23 +246,33 @@ private struct FloatingFooterScrollView<Content: View, Footer: View>: View {
     @State private var contentHeight: CGFloat = 0
     @State private var footerHeight: CGFloat = 0
 
-    private var scrollHeight: CGFloat {
-        min(contentHeight + footerHeight, maxHeight)
+    private var totalHeight: CGFloat {
+        contentHeight + footerHeight
+    }
+
+    private var containerHeight: CGFloat {
+        min(totalHeight, maxHeight)
+    }
+
+    private var needsScrolling: Bool {
+        totalHeight > maxHeight
     }
 
     var body: some View {
-        ScrollView(.vertical) {
-            content()
-                .onGeometryChange(for: CGFloat.self) { geometry in
-                    geometry.size.height
-                } action: { newHeight in
-                    contentHeight = newHeight
+        VStack(spacing: 0) {
+            if needsScrolling {
+                ScrollView(.vertical) {
+                    measuredContent
                 }
+                .defaultScrollAnchor(.top)
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    Color.clear.frame(height: footerHeight)
+                }
+            } else {
+                measuredContent
+            }
         }
-        .safeAreaInset(edge: .bottom, spacing: 0) {
-            Color.clear.frame(height: footerHeight)
-        }
-        .frame(height: scrollHeight)
+        .frame(height: containerHeight > 0 ? containerHeight : nil)
         .overlay(alignment: .bottom) {
             footer()
                 .onGeometryChange(for: CGFloat.self) { geometry in
@@ -233,6 +281,16 @@ private struct FloatingFooterScrollView<Content: View, Footer: View>: View {
                     footerHeight = newHeight
                 }
         }
+    }
+
+    private var measuredContent: some View {
+        content()
+            .fixedSize(horizontal: false, vertical: true)
+            .onGeometryChange(for: CGFloat.self) { geometry in
+                geometry.size.height
+            } action: { newHeight in
+                contentHeight = newHeight
+            }
     }
 }
 

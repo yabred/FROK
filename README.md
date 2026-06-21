@@ -79,7 +79,7 @@ Sounds are saved between restarts. A red ✕ next to a sound means the file fail
 
 - Every hotkey must include at least one modifier: ⌘, ⌥, ⌃, or ⇧.
 - When a hotkey fires, the keystroke is consumed and won't reach other apps.
-- If hotkeys don't work, open **System Settings → Privacy & Security → Accessibility** and enable FROK, then restart the app.
+- If hotkeys don't work, open **System Settings → Privacy & Security → Accessibility** and enable FROK for `/Applications/FROK.app`, then restart the app. Remove older FROK entries if you previously ran a build from Xcode.
 
 ## Command line
 
@@ -97,7 +97,8 @@ Aliases are case-sensitive. You can call `frok` from shell scripts, Shortcuts, O
 
 | Problem | What to try |
 |---------|-------------|
-| Hotkeys don't work | Grant Accessibility permission and restart FROK |
+| Hotkeys don't work | Enable FROK for `/Applications/FROK.app` in Accessibility, remove old FROK entries, then use **Restart FROK** in the app banner |
+| Accessibility enabled but banner remains | Remove FROK from Accessibility, quit FROK, reopen, re-enable for the path shown in the banner, restart |
 | `frok`: "FROK is not running" | Launch FROK first |
 | Red ✕ on a sound | File missing or unsupported — remove and re-add it |
 | Sound doesn't play | Check the alias spelling (case-sensitive) |
