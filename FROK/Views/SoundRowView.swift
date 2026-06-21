@@ -23,7 +23,7 @@ struct SoundRowView: View {
             volumeControl
             deleteButton
         }
-        .padding(.vertical, 6)
+        .padding(.vertical, 2)
     }
 
     private var statusIcon: some View {
@@ -60,16 +60,23 @@ struct SoundRowView: View {
     private var playIndicatorColor: Color {
         switch entry.playbackState {
         case .idle: .secondary
-        case .playing: .accentColor
+        case .playing: accentColorManager.color
         case .stoppedFlash: .red
         }
     }
 
     private var aliasField: some View {
-        TextField("Alias", text: soundLibrary.aliasBinding(for: entry.id))
+        let isFocused = focusedAliasID.wrappedValue == entry.id
+        return TextField("Alias", text: soundLibrary.aliasBinding(for: entry.id))
             .textFieldStyle(.roundedBorder)
             .frame(width: 120)
             .focused(focusedAliasID, equals: entry.id)
+            .focusEffectDisabled(true)
+            .overlay {
+                RoundedRectangle(cornerRadius: 6)
+                    .strokeBorder(accentColorManager.color, lineWidth: 3)
+                    .opacity(isFocused ? 1 : 0)
+            }
     }
 
     private var hotkeyField: some View {

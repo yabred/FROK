@@ -5,6 +5,7 @@ import SwiftUI
 @MainActor
 struct HotkeyRecorderField: View {
     @Environment(SoundLibrary.self) private var soundLibrary
+    @Environment(AccentColorManager.self) private var accentColorManager
 
     let entryID: UUID
     @Binding var activeRecordingID: UUID?
@@ -83,7 +84,7 @@ struct HotkeyRecorderField: View {
         if showsConflict {
             .red
         } else if isRecording {
-            .accentColor
+            accentColorManager.color
         } else {
             Color(nsColor: .separatorColor)
         }
