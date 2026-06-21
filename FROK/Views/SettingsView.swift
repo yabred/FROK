@@ -58,9 +58,22 @@ struct SettingsView: View {
             soundLibrary.onHotkeyRecordingChanged?(newValue != nil)
         }
         .background {
-            MenuBarWindowContentSizeSync(targetHeight: settingsContentHeight)
+            MenuBarWindowContentSizeSync(targetHeight: syncedWindowHeight)
         }
         .tint(accentColorManager.color)
+    }
+
+    private var maxSettingsContentHeight: CGFloat {
+        var chrome: CGFloat = 84
+        if accessibilityPermission.accessState != .granted {
+            chrome += 96
+        }
+        return chrome + maxTableHeight
+    }
+
+    private var syncedWindowHeight: CGFloat {
+        guard settingsContentHeight > 0 else { return 0 }
+        return min(settingsContentHeight, maxSettingsContentHeight)
     }
 
     private var header: some View {
@@ -186,7 +199,6 @@ struct SettingsView: View {
         } footer: {
             footerBar
         }
-        .id(soundLibrary.entries.count)
     }
 
     private var tableContent: some View {
@@ -342,18 +354,13 @@ private struct MenuBarWindowContentSizeSync: NSViewRepresentable {
         func sync(targetHeight: CGFloat) {
             guard targetHeight > 0, abs(lastSyncedHeight - targetHeight) > 1 else { return }
             lastSyncedHeight = targetHeight
-            DispatchQueue.main.async { [weak self] in
-                self?.resizeWindow(toHeight: targetHeight)
-            }
+            resizeWindow(toHeight: targetHeight)
         }
 
         override func viewDidMoveToWindow() {
             super.viewDidMoveToWindow()
             guard lastSyncedHeight > 0 else { return }
-            DispatchQueue.main.async { [weak self] in
-                guard let self else { return }
-                self.resizeWindow(toHeight: self.lastSyncedHeight)
-            }
+            resizeWindow(toHeight: lastSyncedHeight)
         }
 
         private func resizeWindow(toHeight targetHeight: CGFloat) {
