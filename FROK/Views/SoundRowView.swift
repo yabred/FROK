@@ -5,6 +5,7 @@ import SwiftUI
 struct SoundRowView: View {
     @Environment(SoundLibrary.self) private var soundLibrary
     @Environment(EventLogStore.self) private var eventLog
+    @Environment(AccentColorManager.self) private var accentColorManager
 
     let entry: SoundEntry
     @Binding var activeRecordingID: UUID?
@@ -76,7 +77,10 @@ struct SoundRowView: View {
     }
 
     private var playbackModeControl: some View {
-        PlaybackModeSegmentedPicker(selection: soundLibrary.playbackModeBinding(for: entry.id))
+        PlaybackModeSegmentedPicker(
+            selection: soundLibrary.playbackModeBinding(for: entry.id),
+            accentColor: accentColorManager.color
+        )
             .scaleEffect(CGSize(width: 0.75, height: 0.75))
             .frame(maxWidth: 66)
     }
@@ -134,6 +138,7 @@ struct SoundRowView: View {
             )
             .environment(SoundLibrary(previewEntries: [entry]))
             .environment(EventLogStore())
+            .environment(AccentColorManager(previewColorIndex: 0))
             .padding()
             .frame(width: 840)
         }
@@ -144,6 +149,7 @@ struct SoundRowView: View {
 
 private struct PlaybackModeSegmentedPicker: NSViewRepresentable {
     @Binding var selection: SoundPlaybackMode
+    var accentColor: Color
 
     func makeCoordinator() -> Coordinator {
         Coordinator(selection: $selection)
@@ -157,14 +163,20 @@ private struct PlaybackModeSegmentedPicker: NSViewRepresentable {
             target: context.coordinator,
             action: #selector(Coordinator.changed(_:))
         )
+        applyAccentColor(to: control)
         applyTooltips(to: control, modes: modes)
         syncSelection(on: control)
         return control
     }
 
     func updateNSView(_ control: NSSegmentedControl, context: Context) {
+        applyAccentColor(to: control)
         applyTooltips(to: control, modes: SoundPlaybackMode.allCases)
         syncSelection(on: control)
+    }
+
+    private func applyAccentColor(to control: NSSegmentedControl) {
+        control.selectedSegmentBezelColor = NSColor(accentColor)
     }
 
     private func syncSelection(on control: NSSegmentedControl) {
