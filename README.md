@@ -1,178 +1,99 @@
 # FROK
 
-Нативное macOS-приложение для **мгновенного воспроизведения звуков по горячим клавишам**. Держит звуки декодированными в памяти и воспроизводит их через Core Audio — без запуска `afplay` / `ffmpeg` на каждое нажатие.
+Instant sound effects for macOS. FROK lives in your menu bar, keeps sounds ready in memory, and plays them with zero delay — from hotkeys, the settings window, or the command line.
 
-```mermaid
-flowchart LR
-    Hotkeys["Global hotkeys\n(CGEvent tap)"] --> FROK["FROK\nSwift / AVAudioEngine"]
-    IPC["Unix socket\n/tmp/frok.sock"] --> FROK
-    MenuBar["Menu Bar Extra"] --> FROK
-    Files["Audio files\n(security-scoped bookmarks)"] --> FROK
-```
+## What you can do
 
-## Возможности
+- Play sound effects instantly from the menu bar
+- Assign global hotkeys with one-shot or hold-to-play modes
+- Trigger sounds from Terminal or scripts with `frok`
+- Play multiple sounds at once; stop all with `frok stop`
+- Set per-sound volume from 0% to 150%
+- Launch FROK automatically at login
 
-- **Menu bar app** — работает в фоне без иконки в Dock (`LSUIElement`)
-- **Глобальные hotkey-и** — назначение сочетаний клавиш на каждый звук (нужен Accessibility)
-- **Hold-to-play** — удержание клавиши играет звук, отпускание останавливает
-- **Preload в RAM** — файлы декодируются в `AVAudioPCMBuffer` при добавлении
-- **Concurrent playback** — несколько звуков одновременно; команда `-stop` останавливает все
-- **Per-sound volume** — громкость 0–150% для каждого звука
-- **Unix socket IPC** — совместимый текстовый протокол для внешних скриптов и автоматизаций
-- **Launch at login** — автозапуск через `SMAppService`
-- **OSLog** — логи в Console.app, subsystem `com.user.frok`
-
-## Требования
+## Requirements
 
 - macOS 14.0+
-- Xcode 15+
-- Разрешение **Accessibility** — для глобальных hotkey-ов (запрашивается из UI)
+- **Accessibility** permission — required for global hotkeys (not needed for UI preview or the command line)
 
-## Сборка и запуск
+## Install
 
-1. Открыть `FROK.xcodeproj` в Xcode.
-2. Выбрать схему **FROK**, собрать и запустить (⌘R).
-3. В строке меню появится иконка — клик открывает окно настроек.
+1. Open `FROK.xcodeproj` in Xcode 15+.
+2. Select the **FROK** scheme, then build and run (⌘R).
+3. A menu bar icon appears — click it to open settings.
 
-```bash
-xcodebuild -scheme FROK -configuration Debug build
-open DerivedData/Build/Products/Debug/FROK.app
-```
-
-## Использование
-
-1. Запустить FROK — при первом запуске включится **Launch at login**.
-2. Нажать **Add new sound** и выбрать аудиофайлы (MP3, AIFF, WAV и др.).
-3. Задать **alias** — имя для IPC-команд (например `bonk`).
-4. Назначить **hotkey** — клик по полю и нажать сочетание с модификатором (⌥, ⌘, ⌃, ⇧).
-5. При необходимости выдать **Accessibility** в System Settings — иначе hotkey-и не сработают.
-
-Звуки сохраняются как security-scoped bookmarks в `UserDefaults` и переживают перезапуск приложения.
-
-## Протокол IPC
-
-Сокет: **`/tmp/frok.sock`** (Unix domain socket, права `0666`).  
-FROK создаёт его при запуске и удаляет при выходе.
-
-### Формат сообщения
-
-Клиент подключается, отправляет **одну текстовую строку** (UTF-8) и закрывает соединение. Ответа от сервера нет.
-
-| Команда | Поведение |
-|---------|-----------|
-| *(пустая строка)* или `play` | Воспроизвести первый загруженный звук |
-| `-stop` | Остановить все активные воспроизведения |
-| `<alias>` | Воспроизвести звук по alias; если не найден — fallback на первый загруженный |
-
-`<alias>` — значение из колонки **Alias** в настройках FROK (регистр важен).
-
-### Как отправить команду
-
-**1. Через CLI `frok` (рекомендуется):**
-
-CLI встроен в app bundle: `FROK.app/Contents/Resources/bin/frok`.  
-При установке через Homebrew cask симлинк `frok` попадает в `PATH`.
+To use `frok` from anywhere in Terminal, add it to your PATH:
 
 ```bash
-# воспроизвести звук по alias
-frok success
-frok "record scratch"
-frok record scratch
-
-# остановить всё
-frok stop
+ln -sf /path/to/FROK.app/Contents/Resources/bin/frok /usr/local/bin/frok
 ```
 
-**2. Отправить строку через `nc`:**
+## Quick start
+
+1. Launch FROK — the icon appears in the menu bar (no Dock icon).
+2. Click the icon → **Add new sound** → pick audio files (MP3, WAV, AIFF, and more).
+3. Set an **alias** for each sound — this is the name you use with `frok`.
+4. Click the hotkey field and press a key combo with ⌘, ⌥, ⌃, or ⇧.
+5. If prompted, grant **Accessibility** in System Settings — hotkeys won't work without it.
+
+## Using the app
+
+Each sound appears as a row in the settings window:
+
+| Control | What it does |
+|---------|--------------|
+| Play / Stop | Preview the sound |
+| Alias | Name used by `frok` (e.g. `frok applause`) |
+| Hotkey | Global shortcut; press Esc to cancel recording, ✕ to clear |
+| **S / H** | **S** = one-shot (plays the full clip); **H** = hold (plays while the key is held, stops on release). New sounds 3 seconds or shorter default to S |
+| Volume | 0–150% per sound |
+| Trash | Remove the sound |
+
+In the footer:
+
+- **Launch at login** — start FROK automatically when you sign in
+- **Loaded sounds** — how much memory your sounds use
+- **Log** — recent triggers from hotkeys, the UI, and the command line
+- **Exit** — quit FROK
+
+Sounds are saved between restarts. A red ✕ next to a sound means the file failed to load — try adding it again.
+
+## Global hotkeys
+
+- Every hotkey must include at least one modifier: ⌘, ⌥, ⌃, or ⇧.
+- When a hotkey fires, the keystroke is consumed and won't reach other apps.
+- If hotkeys don't work, open **System Settings → Privacy & Security → Accessibility** and enable FROK, then restart the app.
+
+## Command line
+
+FROK must be running for the CLI to work.
 
 ```bash
-# воспроизвести звук по alias
-echo "bonk" | nc -U /tmp/frok.sock
-
-# остановить всё
-echo "-stop" | nc -U /tmp/frok.sock
-
-# дефолтный звук (пустая команда)
-echo "" | nc -U /tmp/frok.sock
-echo "play" | nc -U /tmp/frok.sock
+frok applause              # play by alias
+frok "record scratch"      # multi-word alias
+frok stop                  # stop all playing sounds
 ```
 
-Для Homebrew cask:
+Aliases are case-sensitive. You can call `frok` from shell scripts, Shortcuts, OBS, or any tool that runs shell commands.
 
-```ruby
-binary "#{appdir}/FROK.app/Contents/Resources/bin/frok"
-```
+## Troubleshooting
 
-## Архитектура
+| Problem | What to try |
+|---------|-------------|
+| Hotkeys don't work | Grant Accessibility permission and restart FROK |
+| `frok`: "FROK is not running" | Launch FROK first |
+| Red ✕ on a sound | File missing or unsupported — remove and re-add it |
+| Sound doesn't play | Check the alias spelling (case-sensitive) |
 
-```
-FROK/
-├── FROKApp.swift                    # @main, MenuBarExtra
-├── AppDelegate.swift                # lifecycle, socket + hotkeys
-├── Models/
-│   ├── SoundCommand.swift           # парсинг текстового протокола
-│   ├── SoundEntry.swift             # звук: alias, bookmark, volume, hotkey
-│   ├── SoundHotkey.swift            # модель и отображение hotkey
-│   ├── SoundLoadStatus.swift
-│   └── SoundPlaybackState.swift
-├── Services/
-│   ├── SoundLibrary.swift           # preload, AVAudioEngine, playback
-│   ├── SoundCommandHandler.swift    # обработка IPC-команд
-│   ├── SocketServer.swift           # Unix socket (AF_UNIX)
-│   └── Shared/
-│       └── FROKSocketPath.swift     # путь к сокету (shared с CLI)
-├── FROKCLI/
-│   ├── main.swift                   # frok CLI entry point
-│   └── SocketClient.swift           # Unix socket client
-│   ├── GlobalHotkeyManager.swift    # CGEvent tap, hold-to-play
-│   ├── SoundPersistence.swift       # UserDefaults + bookmarks
-│   ├── LaunchAtLoginManager.swift   # SMAppService
-│   ├── AccessibilityPermissionManager.swift
-│   ├── SoundFilePicker.swift
-│   ├── MenuBarState.swift
-│   └── Logger+FROK.swift
-└── Views/
-    ├── SettingsView.swift           # список звуков, footer
-    ├── SoundRowView.swift           # строка: play, alias, hotkey, volume
-    └── HotkeyRecorderField.swift
-```
-
-Поток данных:
-
-1. `AppDelegate` поднимает `SocketServer` на `/tmp/frok.sock` и `GlobalHotkeyManager`.
-2. IPC-клиент или hotkey → `SoundCommandHandler` / `SoundLibrary`.
-3. `SoundLibrary` воспроизводит preloaded buffer через `AVAudioEngine` + `AVAudioPlayerNode`.
-
-## Текущий статус
-
-| Компонент | Статус |
-|-----------|--------|
-| Menu bar app (без Dock-иконки) | ✅ |
-| Unix socket server | ✅ |
-| Парсинг протокола (`play` / `-stop` / alias) | ✅ |
-| Preload звуков в `AVAudioPCMBuffer` | ✅ |
-| Воспроизведение через `AVAudioEngine` | ✅ |
-| Concurrent play + global stop | ✅ |
-| Глобальные hotkey-и (hold-to-play) | ✅ |
-| Per-sound volume | ✅ |
-| UI настроек (preview, список, hotkey recorder) | ✅ |
-| SMAppService / launch at login | ✅ |
-| FSEvents hot-reload файлов на диске | ⬜ |
-| Более строгие права на socket (0600) | ⬜ |
+Open **Log** in the settings footer to see what triggered each sound.
 
 ## Roadmap
 
-- [ ] Mute всех звуков
-- [ ] Кроп, настройка длительности
-- [ ] Удаление щелчков (смягчить старт и стоп)
-- [ ] Выбор звука на нажатие любой клавиши
+- Mute all sounds
+- Trim and duration controls
+- Softer start/stop to reduce clicks
+- Play on any key press
 
-## Отладка
+## License
 
-Логи — **Console.app**, фильтр по subsystem `com.user.frok`.
-
-После отправки команды в сокет в логах появится строка вида `Received: play(name: "bonk")`.
-
-## Лицензия
-
-Не указана.
+Not specified.
