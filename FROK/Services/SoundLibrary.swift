@@ -165,6 +165,26 @@ final class SoundLibrary {
         }
     }
 
+    func ensureBundledFrogAtFirstPosition() {
+        guard !entries.contains(where: { $0.id == BundledSounds.frogID }) else { return }
+        let entry = SoundEntry(stored: BundledSounds.frogStoredEntry())
+        entries.insert(entry, at: 0)
+        persist()
+        Task { await preload(entryID: entry.id) }
+    }
+
+    func play(id: UUID) {
+        guard let entry = entries.first(where: { $0.id == id }) else { return }
+        switch entry.loadStatus {
+        case .loaded:
+            playEntry(id: id)
+        case .loading:
+            Task { await playWhenLoaded(entryID: id) }
+        case .failed:
+            break
+        }
+    }
+
     func play(alias: String) {
         switch resolveAliasMatch(alias) {
         case .loaded(let entryID):

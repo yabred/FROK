@@ -5,6 +5,7 @@ import UniformTypeIdentifiers
 @MainActor
 struct SettingsView: View {
     @Environment(SoundLibrary.self) private var soundLibrary
+    @Environment(AccentColorManager.self) private var accentColorManager
     @Environment(MenuBarState.self) private var menuBarState
     @EnvironmentObject private var launchAtLogin: LaunchAtLoginManager
     @EnvironmentObject private var accessibilityPermission: AccessibilityPermissionManager
@@ -49,6 +50,7 @@ struct SettingsView: View {
         .onChange(of: activeRecordingID) { _, newValue in
             soundLibrary.onHotkeyRecordingChanged?(newValue != nil)
         }
+        .tint(accentColorManager.color)
     }
 
     private var header: some View {
@@ -56,14 +58,25 @@ struct SettingsView: View {
             Text("FRO")
                 .font(.title)
                 .fontWeight(.bold)
-                .foregroundStyle(Color.accentColor) +
+                .foregroundStyle(accentColorManager.color) +
             Text("g") +
             Text(" K")
                 .font(.title)
                 .fontWeight(.bold)
-                .foregroundStyle(Color.accentColor) +
+                .foregroundStyle(accentColorManager.color) +
             Text("eyboard")
             Spacer()
+            Button("Rabbit!") {
+                accentColorManager.cycle()
+                soundLibrary.ensureBundledFrogAtFirstPosition()
+                soundLibrary.play(id: BundledSounds.frogID)
+            }
+            .font(.callout)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 4)
+            .background(Capsule().fill(accentColorManager.color.opacity(0.15)))
+            .overlay(Capsule().strokeBorder(accentColorManager.color, lineWidth: 1))
+            .buttonStyle(.plain)
         }
     }
     
@@ -345,6 +358,7 @@ private enum SettingsViewPreview {
     ) -> some View {
         SettingsView()
             .environment(SoundLibrary(previewEntries: sampleEntries))
+            .environment(AccentColorManager(previewColorIndex: 0))
             .environment(EventLogStore())
             .environment(MenuBarState())
             .environmentObject(LaunchAtLoginManager(previewIsEnabled: false))

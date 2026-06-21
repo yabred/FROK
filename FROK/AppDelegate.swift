@@ -4,6 +4,7 @@ import OSLog
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     let soundLibrary = SoundLibrary()
+    let accentColorManager = AccentColorManager()
     let eventLogStore = EventLogStore()
     private lazy var commandHandler = SoundCommandHandler(soundLibrary: soundLibrary, eventLog: eventLogStore)
     private var socketServer: SocketServer?
