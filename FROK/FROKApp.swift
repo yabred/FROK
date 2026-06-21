@@ -26,5 +26,6 @@ struct FROKApp: App {
             set: { menuBarState.isPresented = $0 }
         ))
         .menuBarExtraStyle(.window)
+        .windowResizability(.contentSize)
     }
 }

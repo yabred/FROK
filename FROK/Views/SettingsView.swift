@@ -13,6 +13,7 @@ struct SettingsView: View {
     @State private var activeRecordingID: UUID?
     @State private var isLogPanelPresented = false
     @State private var rabbitTapTimes: [Date] = []
+    @State private var settingsContentHeight: CGFloat = 0
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -28,6 +29,11 @@ struct SettingsView: View {
         }
         .frame(minWidth: 570)
         .fixedSize(horizontal: false, vertical: true)
+        .onGeometryChange(for: CGFloat.self) { geometry in
+            geometry.size.height
+        } action: { newHeight in
+            settingsContentHeight = newHeight
+        }
         .contentShape(Rectangle())
         .onTapGesture {
             activeRecordingID = nil
@@ -50,6 +56,9 @@ struct SettingsView: View {
         }
         .onChange(of: activeRecordingID) { _, newValue in
             soundLibrary.onHotkeyRecordingChanged?(newValue != nil)
+        }
+        .background {
+            MenuBarWindowContentSizeSync(targetHeight: settingsContentHeight)
         }
         .tint(accentColorManager.color)
     }
@@ -78,7 +87,7 @@ struct SettingsView: View {
             .buttonStyle(.plain)
         }
     }
-    
+
     private var accessibilityBanner: some View {
         HStack(alignment: .top, spacing: 12) {
             VStack(alignment: .leading, spacing: 6) {
@@ -177,6 +186,7 @@ struct SettingsView: View {
         } footer: {
             footerBar
         }
+        .id(soundLibrary.entries.count)
     }
 
     private var tableContent: some View {
@@ -301,7 +311,7 @@ private struct FloatingFooterScrollView<Content: View, Footer: View>: View {
                     footerHeight = newHeight
                 }
         }
-        .frame(height: containerHeight > 0 ? containerHeight : nil, alignment: .top)
+        .frame(height: needsScrolling && containerHeight > 0 ? containerHeight : nil, alignment: .top)
     }
 
     private var measuredContent: some View {
@@ -312,6 +322,57 @@ private struct FloatingFooterScrollView<Content: View, Footer: View>: View {
             } action: { newHeight in
                 contentHeight = newHeight
             }
+    }
+}
+
+private struct MenuBarWindowContentSizeSync: NSViewRepresentable {
+    let targetHeight: CGFloat
+
+    func makeNSView(context: Context) -> SyncView {
+        SyncView()
+    }
+
+    func updateNSView(_ nsView: SyncView, context: Context) {
+        nsView.sync(targetHeight: targetHeight)
+    }
+
+    final class SyncView: NSView {
+        private var lastSyncedHeight: CGFloat = -1
+
+        func sync(targetHeight: CGFloat) {
+            guard targetHeight > 0, abs(lastSyncedHeight - targetHeight) > 1 else { return }
+            lastSyncedHeight = targetHeight
+            DispatchQueue.main.async { [weak self] in
+                self?.resizeWindow(toHeight: targetHeight)
+            }
+        }
+
+        override func viewDidMoveToWindow() {
+            super.viewDidMoveToWindow()
+            guard lastSyncedHeight > 0 else { return }
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                self.resizeWindow(toHeight: self.lastSyncedHeight)
+            }
+        }
+
+        private func resizeWindow(toHeight targetHeight: CGFloat) {
+            guard let window = menuBarExtraWindow() ?? window,
+                  let contentView = window.contentView else { return }
+
+            contentView.layoutSubtreeIfNeeded()
+            let currentSize = contentView.bounds.size
+            let width = max(currentSize.width, 570)
+            guard abs(currentSize.height - targetHeight) > 1 else { return }
+
+            window.setContentSize(NSSize(width: width, height: targetHeight))
+        }
+
+        private func menuBarExtraWindow() -> NSWindow? {
+            NSApplication.shared.windows.first { window in
+                String(describing: type(of: window)).contains("MenuBarExtraWindow")
+            }
+        }
     }
 }
 
