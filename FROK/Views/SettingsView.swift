@@ -21,11 +21,10 @@ struct SettingsView: View {
             if accessibilityPermission.accessState != .granted {
                 accessibilityBanner
                     .padding(.horizontal, 16)
-                    .padding(.top, 8)
+                    .padding(.vertical, 8)
             }
 
             table
-                .padding(.top, 16)
         }
         .frame(minWidth: 550)
         .fixedSize(horizontal: false, vertical: true)
@@ -265,15 +264,11 @@ private struct FloatingFooterScrollView<Content: View, Footer: View>: View {
                     measuredContent
                 }
                 .defaultScrollAnchor(.top)
-                .safeAreaInset(edge: .bottom, spacing: 0) {
-                    Color.clear.frame(height: footerHeight)
-                }
+                .frame(maxHeight: max(0, maxHeight - footerHeight))
             } else {
                 measuredContent
             }
-        }
-        .frame(height: containerHeight > 0 ? containerHeight : nil)
-        .overlay(alignment: .bottom) {
+
             footer()
                 .onGeometryChange(for: CGFloat.self) { geometry in
                     geometry.size.height
@@ -281,6 +276,7 @@ private struct FloatingFooterScrollView<Content: View, Footer: View>: View {
                     footerHeight = newHeight
                 }
         }
+        .frame(height: containerHeight > 0 ? containerHeight : nil, alignment: .top)
     }
 
     private var measuredContent: some View {
