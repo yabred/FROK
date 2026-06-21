@@ -11,6 +11,7 @@ final class SoundLibrary {
 
     var onHotkeysChanged: (() -> Void)?
     var onHotkeyRecordingChanged: ((Bool) -> Void)?
+    var onPlaybackActivityChanged: (() -> Void)?
 
     private var buffers: [UUID: AVAudioPCMBuffer] = [:]
     private var resolvedURLs: [UUID: URL] = [:]
@@ -28,6 +29,8 @@ final class SoundLibrary {
     private var activePlaybacks: [ActivePlayback] = []
     private var stopFlashTasks: [UUID: Task<Void, Never>] = [:]
     private let persistenceEnabled: Bool
+
+    private(set) var isPlayingAny = false
 
     init() {
         persistenceEnabled = true
@@ -422,6 +425,7 @@ final class SoundLibrary {
 
         let playback = ActivePlayback(entryID: entryID, playerNode: playerNode, mixerNode: mixerNode)
         activePlaybacks.append(playback)
+        syncPlayingAny()
         refreshPlaybackState(for: entryID)
 
         playerNode.scheduleBuffer(buffer, at: nil, options: []) { [weak self] in
@@ -459,6 +463,14 @@ final class SoundLibrary {
         engine.detach(playback.playerNode)
         engine.detach(playback.mixerNode)
         activePlaybacks.removeAll { $0.id == playback.id }
+        syncPlayingAny()
+    }
+
+    private func syncPlayingAny() {
+        let newValue = !activePlaybacks.isEmpty
+        guard newValue != isPlayingAny else { return }
+        isPlayingAny = newValue
+        onPlaybackActivityChanged?()
     }
 
     private func isPlaying(entryID: UUID) -> Bool {

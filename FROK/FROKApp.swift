@@ -18,14 +18,34 @@ struct FROKApp: App {
                 .environmentObject(launchAtLoginManager)
                 .environmentObject(accessibilityPermissionManager)
         } label: {
-            Image("status_icon")
-                .renderingMode(.template)
+            menuBarIconLabel
         }
-        .menuBarExtraAccess(isPresented: Binding(
-            get: { menuBarState.isPresented },
-            set: { menuBarState.isPresented = $0 }
-        ))
+        .menuBarExtraAccess(
+            isPresented: Binding(
+                get: { menuBarState.isPresented },
+                set: { menuBarState.isPresented = $0 }
+            ),
+            statusItem: { _ in
+                let library = appDelegate.soundLibrary
+                library.onPlaybackActivityChanged = {
+                    menuBarState.isSoundPlaying = library.isPlayingAny
+                }
+                menuBarState.isSoundPlaying = library.isPlayingAny
+            }
+        )
         .menuBarExtraStyle(.window)
         .windowResizability(.contentSize)
+    }
+
+    @ViewBuilder
+    private var menuBarIconLabel: some View {
+        if menuBarState.isSoundPlaying {
+            Image(nsImage: StatusBarIcon.playingImage(
+                accentIndex: appDelegate.accentColorManager.currentIndex,
+                color: appDelegate.accentColorManager.nsColor
+            ))
+        } else {
+            Image(nsImage: StatusBarIcon.templateImage())
+        }
     }
 }

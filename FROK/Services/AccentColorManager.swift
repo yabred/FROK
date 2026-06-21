@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 @MainActor
@@ -16,11 +17,26 @@ final class AccentColorManager {
         Color(red: 0.345, green: 0.337, blue: 0.839),
     ]
 
+    static let nsColors: [NSColor] = [
+        NSColor(red: 0.475, green: 0.912, blue: 0.353, alpha: 1),
+        NSColor(red: 1.0, green: 0.231, blue: 0.188, alpha: 1),
+        NSColor(red: 1.0, green: 0.584, blue: 0.0, alpha: 1),
+        NSColor(red: 1.0, green: 0.8, blue: 0.0, alpha: 1),
+        NSColor(red: 1.0, green: 0.176, blue: 0.333, alpha: 1),
+        NSColor(red: 0.686, green: 0.322, blue: 0.871, alpha: 1),
+        NSColor(red: 0.0, green: 0.478, blue: 1.0, alpha: 1),
+        NSColor(red: 0.196, green: 0.678, blue: 0.902, alpha: 1),
+        NSColor(red: 0.0, green: 0.78, blue: 0.745, alpha: 1),
+        NSColor(red: 0.345, green: 0.337, blue: 0.839, alpha: 1),
+    ]
+
     private var index: Int
     private let persistenceEnabled: Bool
     private static let indexKey = "accentColorIndex"
 
     var color: Color { Self.colors[index] }
+    var nsColor: NSColor { Self.nsColors[index] }
+    var currentIndex: Int { index }
 
     init() {
         persistenceEnabled = true

@@ -4,6 +4,7 @@ import SwiftUI
 @Observable
 final class MenuBarState {
     var isPresented = false
+    var isSoundPlaying = false
     private(set) var isPickingFiles = false
 
     func beginFilePick() {
