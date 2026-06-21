@@ -12,6 +12,7 @@ struct SettingsView: View {
     @FocusState private var focusedAliasID: UUID?
     @State private var activeRecordingID: UUID?
     @State private var isLogPanelPresented = false
+    @State private var rabbitTapTimes: [Date] = []
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -25,7 +26,7 @@ struct SettingsView: View {
 
             table
         }
-        .frame(minWidth: 550)
+        .frame(minWidth: 570)
         .fixedSize(horizontal: false, vertical: true)
         .contentShape(Rectangle())
         .onTapGesture {
@@ -67,9 +68,7 @@ struct SettingsView: View {
             Text("eyboard")
             Spacer()
             Button("Rabbit!") {
-                accentColorManager.cycle()
-                soundLibrary.ensureBundledFrogAtFirstPosition()
-                soundLibrary.play(id: BundledSounds.frogID)
+                handleRabbitTap()
             }
             .font(.callout)
             .padding(.horizontal, 12)
@@ -233,6 +232,21 @@ struct SettingsView: View {
             .padding(.vertical, 10)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(.ultraThinMaterial)
+    }
+
+    private func handleRabbitTap() {
+        let now = Date()
+        rabbitTapTimes.append(now)
+        rabbitTapTimes = rabbitTapTimes.filter { now.timeIntervalSince($0) <= 3 }
+
+        accentColorManager.cycle()
+        soundLibrary.ensureBundledFrogAtFirstPosition()
+        soundLibrary.play(id: BundledSounds.frogID)
+
+        if rabbitTapTimes.count >= 10 {
+            rabbitTapTimes = []
+            soundLibrary.addMissingBundledResources()
+        }
     }
 
     private func openSoundPicker() {

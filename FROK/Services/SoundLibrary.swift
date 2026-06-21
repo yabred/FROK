@@ -173,6 +173,19 @@ final class SoundLibrary {
         Task { await preload(entryID: entry.id) }
     }
 
+    func addMissingBundledResources() {
+        let existingBundledNames = Set(entries.compactMap(\.bundledResourceName))
+        let missingNames = BundledSounds.allResourceNames().filter { !existingBundledNames.contains($0) }
+        guard !missingNames.isEmpty else { return }
+
+        for name in missingNames {
+            let entry = SoundEntry(stored: BundledSounds.storedEntry(for: name))
+            entries.append(entry)
+            Task { await preload(entryID: entry.id) }
+        }
+        persist()
+    }
+
     func play(id: UUID) {
         guard let entry = entries.first(where: { $0.id == id }) else { return }
         switch entry.loadStatus {

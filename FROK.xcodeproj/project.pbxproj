@@ -7,6 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6E7A07DE2FE81AB40007AFE7 /* scratch.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6E7A07D52FE81AB40007AFE7 /* scratch.mp3 */; };
+		6E7A07DF2FE81AB40007AFE7 /* borat_dance.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6E7A07CF2FE81AB40007AFE7 /* borat_dance.mp3 */; };
+		6E7A07E02FE81AB40007AFE7 /* strings_funny.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6E7A07D92FE81AB40007AFE7 /* strings_funny.mp3 */; };
+		6E7A07E12FE81AB40007AFE7 /* careless_whisper.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6E7A07D02FE81AB40007AFE7 /* careless_whisper.mp3 */; };
+		6E7A07E22FE81AB40007AFE7 /* yametekudasai_2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6E7A07DD2FE81AB40007AFE7 /* yametekudasai_2.mp3 */; };
+		6E7A07E32FE81AB40007AFE7 /* rifle_shot.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6E7A07D82FE81AB40007AFE7 /* rifle_shot.mp3 */; };
+		6E7A07E42FE81AB40007AFE7 /* sax.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6E7A07D72FE81AB40007AFE7 /* sax.mp3 */; };
+		6E7A07E52FE81AB40007AFE7 /* quack.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6E7A07D42FE81AB40007AFE7 /* quack.mp3 */; };
+		6E7A07E62FE81AB40007AFE7 /* boing.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6E7A07CD2FE81AB40007AFE7 /* boing.mp3 */; };
+		6E7A07E72FE81AB40007AFE7 /* chipi_chapa.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6E7A07D12FE81AB40007AFE7 /* chipi_chapa.mp3 */; };
+		6E7A07E82FE81AB40007AFE7 /* lights_off.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6E7A07DA2FE81AB40007AFE7 /* lights_off.mp3 */; };
+		6E7A07E92FE81AB40007AFE7 /* ba_dum_tsss.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6E7A07CC2FE81AB40007AFE7 /* ba_dum_tsss.mp3 */; };
+		6E7A07EA2FE81AB40007AFE7 /* yametekudasai_1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6E7A07DC2FE81AB40007AFE7 /* yametekudasai_1.mp3 */; };
+		6E7A07EB2FE81AB40007AFE7 /* wow.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6E7A07DB2FE81AB40007AFE7 /* wow.mp3 */; };
+		6E7A07EC2FE81AB40007AFE7 /* demotivator.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6E7A07D22FE81AB40007AFE7 /* demotivator.mp3 */; };
+		6E7A07ED2FE81AB40007AFE7 /* bonk.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6E7A07CE2FE81AB40007AFE7 /* bonk.mp3 */; };
+		6E7A07EE2FE81AB40007AFE7 /* ontiva.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6E7A07D32FE81AB40007AFE7 /* ontiva.mp3 */; };
+		6E7A07EF2FE81AB40007AFE7 /* rizz.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6E7A07D62FE81AB40007AFE7 /* rizz.mp3 */; };
 		A10000010000000000000010 /* FROKApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000010000000000000050 /* FROKApp.swift */; };
 		A10000010000000000000011 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000010000000000000051 /* AppDelegate.swift */; };
 		A10000010000000000000012 /* SoundCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000010000000000000052 /* SoundCommand.swift */; };
@@ -42,7 +60,49 @@
 		A10000010000000000000095 /* AccentColorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000010000000000000096 /* AccentColorManager.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		A1000001000000000000008A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A10000010000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A10000010000000000000084;
+			remoteInfo = FROKCLI;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A10000010000000000000087 /* Copy Files */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = bin;
+			dstSubfolderSpec = 7;
+			files = (
+				A10000010000000000000088 /* frok in Copy Files */,
+			);
+			name = "Copy Files";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		6E7A07CC2FE81AB40007AFE7 /* ba_dum_tsss.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = ba_dum_tsss.mp3; sourceTree = "<group>"; };
+		6E7A07CD2FE81AB40007AFE7 /* boing.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = boing.mp3; sourceTree = "<group>"; };
+		6E7A07CE2FE81AB40007AFE7 /* bonk.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = bonk.mp3; sourceTree = "<group>"; };
+		6E7A07CF2FE81AB40007AFE7 /* borat_dance.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = borat_dance.mp3; sourceTree = "<group>"; };
+		6E7A07D02FE81AB40007AFE7 /* careless_whisper.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = careless_whisper.mp3; sourceTree = "<group>"; };
+		6E7A07D12FE81AB40007AFE7 /* chipi_chapa.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = chipi_chapa.mp3; sourceTree = "<group>"; };
+		6E7A07D22FE81AB40007AFE7 /* demotivator.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = demotivator.mp3; sourceTree = "<group>"; };
+		6E7A07D32FE81AB40007AFE7 /* ontiva.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = ontiva.mp3; sourceTree = "<group>"; };
+		6E7A07D42FE81AB40007AFE7 /* quack.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = quack.mp3; sourceTree = "<group>"; };
+		6E7A07D52FE81AB40007AFE7 /* scratch.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = scratch.mp3; sourceTree = "<group>"; };
+		6E7A07D62FE81AB40007AFE7 /* rizz.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = rizz.mp3; sourceTree = "<group>"; };
+		6E7A07D72FE81AB40007AFE7 /* sax.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = sax.mp3; sourceTree = "<group>"; };
+		6E7A07D82FE81AB40007AFE7 /* rifle_shot.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = rifle_shot.mp3; sourceTree = "<group>"; };
+		6E7A07D92FE81AB40007AFE7 /* strings_funny.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = strings_funny.mp3; sourceTree = "<group>"; };
+		6E7A07DA2FE81AB40007AFE7 /* lights_off.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = lights_off.mp3; sourceTree = "<group>"; };
+		6E7A07DB2FE81AB40007AFE7 /* wow.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = wow.mp3; sourceTree = "<group>"; };
+		6E7A07DC2FE81AB40007AFE7 /* yametekudasai_1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = yametekudasai_1.mp3; sourceTree = "<group>"; };
+		6E7A07DD2FE81AB40007AFE7 /* yametekudasai_2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = yametekudasai_2.mp3; sourceTree = "<group>"; };
 		A10000010000000000000003 /* FROK.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FROK.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A10000010000000000000050 /* FROKApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FROKApp.swift; sourceTree = "<group>"; };
 		A10000010000000000000051 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -96,30 +156,6 @@
 		};
 /* End PBXFrameworksBuildPhase section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		A10000010000000000000087 /* Copy Files */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = bin;
-			dstSubfolderSpec = 7;
-			files = (
-				A10000010000000000000088 /* frok in Copy Files */,
-			);
-			name = "Copy Files";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
-/* Begin PBXContainerItemProxy section */
-		A1000001000000000000008A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A10000010000000000000001 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A10000010000000000000084;
-			remoteInfo = FROKCLI;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXGroup section */
 		A10000010000000000000020 = {
 			isa = PBXGroup;
@@ -158,23 +194,6 @@
 				A10000010000000000000094 /* BundledSounds.swift */,
 			);
 			path = Models;
-			sourceTree = "<group>";
-		};
-		A1000001000000000000007C /* Shared */ = {
-			isa = PBXGroup;
-			children = (
-				A1000001000000000000007A /* FROKSocketPath.swift */,
-			);
-			path = Shared;
-			sourceTree = "<group>";
-		};
-		A1000001000000000000007D /* FROKCLI */ = {
-			isa = PBXGroup;
-			children = (
-				A1000001000000000000007E /* main.swift */,
-				A1000001000000000000007F /* SocketClient.swift */,
-			);
-			path = FROKCLI;
 			sourceTree = "<group>";
 		};
 		A10000010000000000000023 /* Services */ = {
@@ -216,9 +235,44 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		A1000001000000000000007C /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				A1000001000000000000007A /* FROKSocketPath.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		A1000001000000000000007D /* FROKCLI */ = {
+			isa = PBXGroup;
+			children = (
+				A1000001000000000000007E /* main.swift */,
+				A1000001000000000000007F /* SocketClient.swift */,
+			);
+			path = FROKCLI;
+			sourceTree = "<group>";
+		};
 		A10000010000000000000092 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				6E7A07CC2FE81AB40007AFE7 /* ba_dum_tsss.mp3 */,
+				6E7A07CD2FE81AB40007AFE7 /* boing.mp3 */,
+				6E7A07CE2FE81AB40007AFE7 /* bonk.mp3 */,
+				6E7A07CF2FE81AB40007AFE7 /* borat_dance.mp3 */,
+				6E7A07D02FE81AB40007AFE7 /* careless_whisper.mp3 */,
+				6E7A07D12FE81AB40007AFE7 /* chipi_chapa.mp3 */,
+				6E7A07D22FE81AB40007AFE7 /* demotivator.mp3 */,
+				6E7A07D32FE81AB40007AFE7 /* ontiva.mp3 */,
+				6E7A07D42FE81AB40007AFE7 /* quack.mp3 */,
+				6E7A07D52FE81AB40007AFE7 /* scratch.mp3 */,
+				6E7A07D62FE81AB40007AFE7 /* rizz.mp3 */,
+				6E7A07D72FE81AB40007AFE7 /* sax.mp3 */,
+				6E7A07D82FE81AB40007AFE7 /* rifle_shot.mp3 */,
+				6E7A07D92FE81AB40007AFE7 /* strings_funny.mp3 */,
+				6E7A07DA2FE81AB40007AFE7 /* lights_off.mp3 */,
+				6E7A07DB2FE81AB40007AFE7 /* wow.mp3 */,
+				6E7A07DC2FE81AB40007AFE7 /* yametekudasai_1.mp3 */,
+				6E7A07DD2FE81AB40007AFE7 /* yametekudasai_2.mp3 */,
 				A10000010000000000000091 /* frog.mp3 */,
 			);
 			path = Resources;
@@ -311,6 +365,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				A10000010000000000000017 /* Assets.xcassets in Resources */,
+				6E7A07DE2FE81AB40007AFE7 /* scratch.mp3 in Resources */,
+				6E7A07DF2FE81AB40007AFE7 /* borat_dance.mp3 in Resources */,
+				6E7A07E02FE81AB40007AFE7 /* strings_funny.mp3 in Resources */,
+				6E7A07E12FE81AB40007AFE7 /* careless_whisper.mp3 in Resources */,
+				6E7A07E22FE81AB40007AFE7 /* yametekudasai_2.mp3 in Resources */,
+				6E7A07E32FE81AB40007AFE7 /* rifle_shot.mp3 in Resources */,
+				6E7A07E42FE81AB40007AFE7 /* sax.mp3 in Resources */,
+				6E7A07E52FE81AB40007AFE7 /* quack.mp3 in Resources */,
+				6E7A07E62FE81AB40007AFE7 /* boing.mp3 in Resources */,
+				6E7A07E72FE81AB40007AFE7 /* chipi_chapa.mp3 in Resources */,
+				6E7A07E82FE81AB40007AFE7 /* lights_off.mp3 in Resources */,
+				6E7A07E92FE81AB40007AFE7 /* ba_dum_tsss.mp3 in Resources */,
+				6E7A07EA2FE81AB40007AFE7 /* yametekudasai_1.mp3 in Resources */,
+				6E7A07EB2FE81AB40007AFE7 /* wow.mp3 in Resources */,
+				6E7A07EC2FE81AB40007AFE7 /* demotivator.mp3 in Resources */,
+				6E7A07ED2FE81AB40007AFE7 /* bonk.mp3 in Resources */,
+				6E7A07EE2FE81AB40007AFE7 /* ontiva.mp3 in Resources */,
+				6E7A07EF2FE81AB40007AFE7 /* rizz.mp3 in Resources */,
 				A10000010000000000000090 /* frog.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -434,42 +506,6 @@
 			};
 			name = Release;
 		};
-		A1000001000000000000008B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
-				DEVELOPMENT_TEAM = EP8UBDJTLC;
-				ENABLE_HARDENED_RUNTIME = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.YB.frok.cli;
-				PRODUCT_NAME = frok;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
-		};
-		A1000001000000000000008C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
-				DEVELOPMENT_TEAM = EP8UBDJTLC;
-				ENABLE_HARDENED_RUNTIME = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.YB.frok.cli;
-				PRODUCT_NAME = frok;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Release;
-		};
 		A10000010000000000000044 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -588,26 +624,43 @@
 			};
 			name = Release;
 		};
-/* End XCBuildConfiguration section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		A10000010000000000000070 /* XCRemoteSwiftPackageReference "MenuBarExtraAccess" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/orchetect/MenuBarExtraAccess";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+		A1000001000000000000008B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = EP8UBDJTLC;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.YB.frok.cli;
+				PRODUCT_NAME = frok;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
 			};
+			name = Debug;
 		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		A10000010000000000000071 /* MenuBarExtraAccess */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A10000010000000000000070 /* XCRemoteSwiftPackageReference "MenuBarExtraAccess" */;
-			productName = MenuBarExtraAccess;
+		A1000001000000000000008C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = EP8UBDJTLC;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.YB.frok.cli;
+				PRODUCT_NAME = frok;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
 		};
-/* End XCSwiftPackageProductDependency section */
+/* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
 		A10000010000000000000040 /* Build configuration list for PBXProject "FROK" */ = {
@@ -638,6 +691,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A10000010000000000000070 /* XCRemoteSwiftPackageReference "MenuBarExtraAccess" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/orchetect/MenuBarExtraAccess";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A10000010000000000000071 /* MenuBarExtraAccess */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A10000010000000000000070 /* XCRemoteSwiftPackageReference "MenuBarExtraAccess" */;
+			productName = MenuBarExtraAccess;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A10000010000000000000001 /* Project object */;
 }
