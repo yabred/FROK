@@ -7,7 +7,7 @@ Step-by-step guide for publishing a new version to GitHub Releases and Homebrew.
 - **Version format:** semver tags like `v1.0.1`, `v1.1.0`, `v2.0.0`
 - **Repositories:**
   - App: [yabred/FROK](https://github.com/yabred/FROK)
-  - Homebrew tap: [yabred/homebrew](https://github.com/yabred/homebrew)
+  - Homebrew tap: [yabred/homebrew-tap](https://github.com/yabred/homebrew-tap)
 
 ## 1. Bump the version in Xcode
 
@@ -65,7 +65,7 @@ This prints a local `sha256`. **Use the checksum from the GitHub Release asset**
 
 ## 5. Update the Homebrew cask
 
-In [yabred/homebrew](https://github.com/yabred/homebrew), edit `Casks/frok.rb`:
+In [yabred/homebrew-tap](https://github.com/yabred/homebrew-tap), edit `Casks/frok.rb`:
 
 1. Set `version` to the new number (without `v`).
 2. Set `sha256` to the checksum of the **downloaded release zip**.
@@ -123,4 +123,4 @@ Current releases are **not notarized**. On first launch, macOS may block the app
 | Topic | What to add |
 |-------|-------------|
 | Code signing + notarization | Developer ID cert, `ExportOptions.plist`, notarytool in CI |
-| Auto-update cask | GitHub Actions step with a PAT to commit sha256 to `yabred/homebrew` |
+| Auto-update cask | GitHub Actions step with a PAT to commit sha256 to `yabred/homebrew-tap` |
