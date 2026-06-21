@@ -64,7 +64,7 @@ final class SoundLibrary {
             do {
                 let bookmarkData = try SoundBookmark.create(from: url)
                 let alias = uniqueAlias(for: resolved.deletingPathExtension().lastPathComponent)
-                let playbackMode = Self.defaultPlaybackMode(for: resolved)
+                let playbackMode = SoundPlaybackMode.defaultForAudio(at: resolved)
                 let entry = SoundEntry(alias: alias, bookmarkData: bookmarkData, playbackMode: playbackMode)
                 entries.append(entry)
                 existingPaths.insert(resolved.path)
@@ -529,18 +529,6 @@ final class SoundLibrary {
                 try? await Task.sleep(for: .milliseconds(100))
             }
         }
-    }
-
-    private static let oneShotMaxDuration: TimeInterval = 3
-
-    nonisolated private static func defaultPlaybackMode(for url: URL) -> SoundPlaybackMode {
-        guard let duration = audioDuration(of: url) else { return .hold }
-        return duration <= oneShotMaxDuration ? .oneShot : .hold
-    }
-
-    nonisolated private static func audioDuration(of url: URL) -> TimeInterval? {
-        guard let file = try? AVAudioFile(forReading: url) else { return nil }
-        return Double(file.length) / file.processingFormat.sampleRate
     }
 
     private static let byteCountFormatter: ByteCountFormatter = {

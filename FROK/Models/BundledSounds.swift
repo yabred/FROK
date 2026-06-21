@@ -28,13 +28,20 @@ enum BundledSounds {
     }
 
     static func storedEntry(for resourceName: String) -> StoredSoundEntry {
-        StoredSoundEntry(
+        let playbackMode: SoundPlaybackMode
+        if let url = Bundle.main.url(forResource: resourceName, withExtension: "mp3") {
+            playbackMode = SoundPlaybackMode.defaultForAudio(at: url)
+        } else {
+            playbackMode = .oneShot
+        }
+
+        return StoredSoundEntry(
             id: id(for: resourceName),
             alias: resourceName,
             bookmarkData: Data(),
             volume: 1.0,
             hotkey: nil,
-            playbackMode: .oneShot,
+            playbackMode: playbackMode,
             bundledResourceName: resourceName
         )
     }
