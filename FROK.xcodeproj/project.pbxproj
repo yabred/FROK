@@ -32,6 +32,11 @@
 		A10000010000000000000075 /* EventLogStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000010000000000000074 /* EventLogStore.swift */; };
 		A10000010000000000000077 /* EventLogPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000010000000000000076 /* EventLogPanelView.swift */; };
 		A10000010000000000000079 /* SoundPlaybackMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000010000000000000078 /* SoundPlaybackMode.swift */; };
+		A1000001000000000000007B /* FROKSocketPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001000000000000007A /* FROKSocketPath.swift */; };
+		A10000010000000000000081 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001000000000000007E /* main.swift */; };
+		A10000010000000000000082 /* SocketClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001000000000000007F /* SocketClient.swift */; };
+		A10000010000000000000083 /* FROKSocketPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001000000000000007A /* FROKSocketPath.swift */; };
+		A10000010000000000000088 /* frok in Copy Files */ = {isa = PBXBuildFile; fileRef = A10000010000000000000080 /* frok */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,6 +66,10 @@
 		A10000010000000000000074 /* EventLogStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventLogStore.swift; sourceTree = "<group>"; };
 		A10000010000000000000076 /* EventLogPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventLogPanelView.swift; sourceTree = "<group>"; };
 		A10000010000000000000078 /* SoundPlaybackMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundPlaybackMode.swift; sourceTree = "<group>"; };
+		A1000001000000000000007A /* FROKSocketPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FROKSocketPath.swift; sourceTree = "<group>"; };
+		A1000001000000000000007E /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		A1000001000000000000007F /* SocketClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketClient.swift; sourceTree = "<group>"; };
+		A10000010000000000000080 /* frok */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = frok; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,13 +81,45 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A10000010000000000000086 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A10000010000000000000087 /* Copy Files */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = bin;
+			dstSubfolderSpec = 7;
+			files = (
+				A10000010000000000000088 /* frok in Copy Files */,
+			);
+			name = "Copy Files";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXContainerItemProxy section */
+		A1000001000000000000008A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A10000010000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A10000010000000000000084;
+			remoteInfo = FROKCLI;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXGroup section */
 		A10000010000000000000020 = {
 			isa = PBXGroup;
 			children = (
 				A10000010000000000000021 /* FROK */,
+				A1000001000000000000007D /* FROKCLI */,
 				A10000010000000000000025 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -89,6 +130,7 @@
 				A10000010000000000000050 /* FROKApp.swift */,
 				A10000010000000000000051 /* AppDelegate.swift */,
 				A10000010000000000000022 /* Models */,
+				A1000001000000000000007C /* Shared */,
 				A10000010000000000000023 /* Services */,
 				A10000010000000000000024 /* Views */,
 				A10000010000000000000057 /* Assets.xcassets */,
@@ -108,6 +150,23 @@
 				A10000010000000000000078 /* SoundPlaybackMode.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		A1000001000000000000007C /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				A1000001000000000000007A /* FROKSocketPath.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		A1000001000000000000007D /* FROKCLI */ = {
+			isa = PBXGroup;
+			children = (
+				A1000001000000000000007E /* main.swift */,
+				A1000001000000000000007F /* SocketClient.swift */,
+			);
+			path = FROKCLI;
 			sourceTree = "<group>";
 		};
 		A10000010000000000000023 /* Services */ = {
@@ -143,6 +202,7 @@
 			isa = PBXGroup;
 			children = (
 				A10000010000000000000003 /* FROK.app */,
+				A10000010000000000000080 /* frok */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -157,10 +217,12 @@
 				A10000010000000000000030 /* Sources */,
 				A10000010000000000000032 /* Frameworks */,
 				A10000010000000000000031 /* Resources */,
+				A10000010000000000000087 /* Copy Files */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				A10000010000000000000089 /* PBXTargetDependency */,
 			);
 			name = FROK;
 			packageProductDependencies = (
@@ -169,6 +231,22 @@
 			productName = FROK;
 			productReference = A10000010000000000000003 /* FROK.app */;
 			productType = "com.apple.product-type.application";
+		};
+		A10000010000000000000084 /* FROKCLI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1000001000000000000008D /* Build configuration list for PBXNativeTarget "FROKCLI" */;
+			buildPhases = (
+				A10000010000000000000085 /* Sources */,
+				A10000010000000000000086 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FROKCLI;
+			productName = frok;
+			productReference = A10000010000000000000080 /* frok */;
+			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
 
@@ -181,6 +259,9 @@
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					A10000010000000000000002 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					A10000010000000000000084 = {
 						CreatedOnToolsVersion = 16.0;
 					};
 				};
@@ -202,6 +283,7 @@
 			projectRoot = "";
 			targets = (
 				A10000010000000000000002 /* FROK */,
+				A10000010000000000000084 /* FROKCLI */,
 			);
 		};
 /* End PBXProject section */
@@ -245,10 +327,29 @@
 				A10000010000000000000075 /* EventLogStore.swift in Sources */,
 				A10000010000000000000077 /* EventLogPanelView.swift in Sources */,
 				A10000010000000000000079 /* SoundPlaybackMode.swift in Sources */,
+				A1000001000000000000007B /* FROKSocketPath.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A10000010000000000000085 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000010000000000000081 /* main.swift in Sources */,
+				A10000010000000000000082 /* SocketClient.swift in Sources */,
+				A10000010000000000000083 /* FROKSocketPath.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A10000010000000000000089 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A10000010000000000000084 /* FROKCLI */;
+			targetProxy = A1000001000000000000008A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		A10000010000000000000042 /* Debug */ = {
@@ -309,6 +410,42 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		A1000001000000000000008B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EP8UBDJTLC;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.YB.frok.cli;
+				PRODUCT_NAME = frok;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A1000001000000000000008C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EP8UBDJTLC;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.YB.frok.cli;
+				PRODUCT_NAME = frok;
+				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -465,6 +602,15 @@
 			buildConfigurations = (
 				A10000010000000000000042 /* Debug */,
 				A10000010000000000000043 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1000001000000000000008D /* Build configuration list for PBXNativeTarget "FROKCLI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1000001000000000000008B /* Debug */,
+				A1000001000000000000008C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

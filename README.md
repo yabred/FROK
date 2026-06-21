@@ -68,7 +68,22 @@ FROK создаёт его при запуске и удаляет при вых
 
 ### Как отправить команду
 
-**1. Отправить строку через `nc` (рекомендуется на macOS):**
+**1. Через CLI `frok` (рекомендуется):**
+
+CLI встроен в app bundle: `FROK.app/Contents/Resources/bin/frok`.  
+При установке через Homebrew cask симлинк `frok` попадает в `PATH`.
+
+```bash
+# воспроизвести звук по alias
+frok success
+frok "record scratch"
+frok record scratch
+
+# остановить всё
+frok stop
+```
+
+**2. Отправить строку через `nc`:**
 
 ```bash
 # воспроизвести звук по alias
@@ -80,6 +95,12 @@ echo "-stop" | nc -U /tmp/frok.sock
 # дефолтный звук (пустая команда)
 echo "" | nc -U /tmp/frok.sock
 echo "play" | nc -U /tmp/frok.sock
+```
+
+Для Homebrew cask:
+
+```ruby
+binary "#{appdir}/FROK.app/Contents/Resources/bin/frok"
 ```
 
 ## Архитектура
@@ -98,6 +119,11 @@ FROK/
 │   ├── SoundLibrary.swift           # preload, AVAudioEngine, playback
 │   ├── SoundCommandHandler.swift    # обработка IPC-команд
 │   ├── SocketServer.swift           # Unix socket (AF_UNIX)
+│   └── Shared/
+│       └── FROKSocketPath.swift     # путь к сокету (shared с CLI)
+├── FROKCLI/
+│   ├── main.swift                   # frok CLI entry point
+│   └── SocketClient.swift           # Unix socket client
 │   ├── GlobalHotkeyManager.swift    # CGEvent tap, hold-to-play
 │   ├── SoundPersistence.swift       # UserDefaults + bookmarks
 │   ├── LaunchAtLoginManager.swift   # SMAppService

@@ -28,7 +28,7 @@ final class SocketServer {
     private var acceptSource: DispatchSourceRead?
     private let queue = DispatchQueue(label: "com.user.frok.socket", qos: .userInitiated)
 
-    init(socketPath: String = "/tmp/frok.sock", commandHandler: SoundCommandHandler) {
+    init(socketPath: String = FROKSocketPath.default, commandHandler: SoundCommandHandler) {
         self.socketPath = socketPath
         self.commandHandler = commandHandler
     }
@@ -128,18 +128,11 @@ final class SocketServer {
     private func handleClient(fd: Int32) {
         defer { close(fd) }
 
-        var buffer = Data()
         var chunk = [UInt8](repeating: 0, count: 4096)
+        let bytesRead = read(fd, &chunk, chunk.count)
+        guard bytesRead > 0 else { return }
 
-        while true {
-            let bytesRead = read(fd, &chunk, chunk.count)
-            if bytesRead <= 0 {
-                break
-            }
-            buffer.append(contentsOf: chunk[0..<bytesRead])
-        }
-
-        let line = String(data: buffer, encoding: .utf8) ?? ""
+        let line = String(bytes: chunk[0..<bytesRead], encoding: .utf8) ?? ""
         let soundCommand = SoundCommand(rawLine: line)
         commandHandler.handle(soundCommand, rawLine: line.trimmingCharacters(in: .newlines))
     }
