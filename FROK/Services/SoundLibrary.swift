@@ -133,7 +133,7 @@ final class SoundLibrary {
         guard let entry = entries.first(where: { $0.id == id }) else { return }
 
         switch entry.playbackMode {
-        case .oneShot:
+        case .oneShot, .restart:
             playEntry(id: id)
         case .hold:
             stopPlaybacks(for: id, manualFromUI: false)
@@ -359,6 +359,10 @@ final class SoundLibrary {
         guard let buffer = buffers[id],
               let index = entries.firstIndex(where: { $0.id == id }),
               entries[index].loadStatus == .loaded else { return }
+
+        if entries[index].playbackMode == .restart {
+            stopPlaybacks(for: id, manualFromUI: false)
+        }
 
         let volume = entries[index].volume
 

@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 @MainActor
@@ -75,17 +76,9 @@ struct SoundRowView: View {
     }
 
     private var playbackModeControl: some View {
-        Picker("Playback mode", selection: soundLibrary.playbackModeBinding(for: entry.id)) {
-            ForEach(SoundPlaybackMode.allCases, id: \.self) { mode in
-                Text(mode.label)
-//                    .font(.system(size: 6))
-                    .tag(mode)
-            }
-        }
-        .pickerStyle(.segmented)
-        .labelsHidden()
-        .scaleEffect(CGSize(width: 0.75, height: 0.75))
-        .frame(maxWidth: 44)
+        PlaybackModeSegmentedPicker(selection: soundLibrary.playbackModeBinding(for: entry.id))
+            .scaleEffect(CGSize(width: 0.75, height: 0.75))
+            .frame(maxWidth: 66)
     }
 
     private var volumeControl: some View {
@@ -147,4 +140,56 @@ struct SoundRowView: View {
     }
 
     return PreviewContainer()
+}
+
+private struct PlaybackModeSegmentedPicker: NSViewRepresentable {
+    @Binding var selection: SoundPlaybackMode
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(selection: $selection)
+    }
+
+    func makeNSView(context: Context) -> NSSegmentedControl {
+        let modes = SoundPlaybackMode.allCases
+        let control = NSSegmentedControl(
+            labels: modes.map(\.label),
+            trackingMode: .selectOne,
+            target: context.coordinator,
+            action: #selector(Coordinator.changed(_:))
+        )
+        applyTooltips(to: control, modes: modes)
+        syncSelection(on: control)
+        return control
+    }
+
+    func updateNSView(_ control: NSSegmentedControl, context: Context) {
+        applyTooltips(to: control, modes: SoundPlaybackMode.allCases)
+        syncSelection(on: control)
+    }
+
+    private func syncSelection(on control: NSSegmentedControl) {
+        guard let index = SoundPlaybackMode.allCases.firstIndex(of: selection) else { return }
+        control.selectedSegment = index
+    }
+
+    private func applyTooltips(to control: NSSegmentedControl, modes: [SoundPlaybackMode]) {
+        for (index, mode) in modes.enumerated() {
+            control.setToolTip(mode.tooltip, forSegment: index)
+        }
+    }
+
+    final class Coordinator: NSObject {
+        var selection: Binding<SoundPlaybackMode>
+
+        init(selection: Binding<SoundPlaybackMode>) {
+            self.selection = selection
+        }
+
+        @objc func changed(_ sender: NSSegmentedControl) {
+            let modes = SoundPlaybackMode.allCases
+            let index = sender.selectedSegment
+            guard modes.indices.contains(index) else { return }
+            selection.wrappedValue = modes[index]
+        }
+    }
 }
