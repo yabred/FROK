@@ -24,12 +24,30 @@ final class AccessibilityPermissionManager: ObservableObject {
     private var pollTimer: Timer?
     private var didBecomeActiveObserver: NSObjectProtocol?
     private var workspaceActivationObserver: NSObjectProtocol?
+    private let isPreviewMode: Bool
+    private let previewBundlePath: String?
+    private let previewBundleIdentifier: String?
 
     private init() {
+        isPreviewMode = false
+        previewBundlePath = nil
+        previewBundleIdentifier = nil
         accessState = Self.evaluateAccessState()
     }
 
+    init(
+        previewAccessState: AccessibilityAccessState,
+        bundlePath: String = "/Applications/FROK.app",
+        bundleIdentifier: String = "com.example.FROK"
+    ) {
+        isPreviewMode = true
+        previewBundlePath = bundlePath
+        previewBundleIdentifier = bundleIdentifier
+        accessState = previewAccessState
+    }
+
     func refreshStatus() {
+        guard !isPreviewMode else { return }
         let newState = Self.evaluateAccessState()
         guard newState != accessState else { return }
 
@@ -76,6 +94,7 @@ final class AccessibilityPermissionManager: ObservableObject {
     }
 
     func openAccessibilitySettings() {
+        guard !isPreviewMode else { return }
         let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
         let trustedAfterPrompt = AXIsProcessTrustedWithOptions(options)
 
@@ -101,6 +120,7 @@ final class AccessibilityPermissionManager: ObservableObject {
     }
 
     func restartApp() {
+        guard !isPreviewMode else { return }
         let bundleURL = Bundle.main.bundleURL
         NSWorkspace.shared.openApplication(at: bundleURL, configuration: NSWorkspace.OpenConfiguration()) { _, _ in
             Task { @MainActor in
@@ -110,11 +130,11 @@ final class AccessibilityPermissionManager: ObservableObject {
     }
 
     var bundlePathForDisplay: String {
-        Bundle.main.bundlePath
+        previewBundlePath ?? Bundle.main.bundlePath
     }
 
     var bundleIdentifierForDisplay: String {
-        Bundle.main.bundleIdentifier ?? "unknown"
+        previewBundleIdentifier ?? Bundle.main.bundleIdentifier ?? "unknown"
     }
 
     static func canCreateEventTap() -> Bool {

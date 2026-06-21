@@ -15,13 +15,11 @@ struct SettingsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             header
-                .padding(.horizontal, 16)
-                .padding(.top, 16)
+                .padding(16)
 
             if accessibilityPermission.accessState != .granted {
                 accessibilityBanner
                     .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
             }
 
             table
@@ -290,36 +288,72 @@ private struct FloatingFooterScrollView<Content: View, Footer: View>: View {
     }
 }
 
-#Preview {
-    let entry = SoundEntry(
-        alias: "Applause",
-        bookmarkData: Data(),
-        volume: 0.75,
-        hotkey: SoundHotkey(keyCode: 49, carbonModifiers: 256),
-        loadStatus: .loaded,
-        playbackState: .idle
-    )
-    let entry2 = SoundEntry(
-        alias: "Bonk",
-        bookmarkData: Data(),
-        volume: 0.3,
-        hotkey: SoundHotkey(keyCode: 43, carbonModifiers: 6912),
-        loadStatus: .loading,
-        playbackState: .playing
-    )
-    let entry3 = SoundEntry(
-        alias: "Hello",
-        bookmarkData: Data(),
-        volume: 1.5,
-        hotkey: SoundHotkey(keyCode: 49, carbonModifiers: 4608),
-        loadStatus: .failed("fail"),
-        playbackState: .stoppedFlash
-    )
-    
-    SettingsView()
-        .environment(SoundLibrary(previewEntries: [entry, entry2, entry3]))
-        .environment(EventLogStore())
-        .environment(MenuBarState())
-        .environmentObject(LaunchAtLoginManager.shared)
-        .environmentObject(AccessibilityPermissionManager.shared)
+#Preview("Accessibility granted") {
+    SettingsViewPreview.make(accessState: .granted, sampleEntries: SettingsViewPreview.sampleEntries)
+}
+
+#Preview("Accessibility not granted") {
+    SettingsViewPreview.make(accessState: .notGranted, sampleEntries: SettingsViewPreview.sampleEntries)
+}
+
+#Preview("Accessibility stale") {
+    SettingsViewPreview.make(accessState: .stale, sampleEntries: SettingsViewPreview.sampleEntries)
+}
+
+#Preview("Sounds empty no acc") {
+    SettingsViewPreview.make(accessState: .stale)
+}
+
+#Preview("Sounds empty") {
+    SettingsViewPreview.make(accessState: .granted)
+}
+
+@MainActor
+private enum SettingsViewPreview {
+    static var sampleEntries: [SoundEntry] {
+        [
+            SoundEntry(
+                alias: "Applause",
+                bookmarkData: Data(),
+                volume: 0.75,
+                hotkey: SoundHotkey(keyCode: 49, carbonModifiers: 256),
+                loadStatus: .loaded,
+                playbackState: .idle
+            ),
+            SoundEntry(
+                alias: "Bonk",
+                bookmarkData: Data(),
+                volume: 0.3,
+                hotkey: SoundHotkey(keyCode: 43, carbonModifiers: 6912),
+                loadStatus: .loading,
+                playbackState: .playing
+            ),
+            SoundEntry(
+                alias: "Hello",
+                bookmarkData: Data(),
+                volume: 1.5,
+                hotkey: SoundHotkey(keyCode: 49, carbonModifiers: 4608),
+                loadStatus: .failed("fail"),
+                playbackState: .stoppedFlash
+            ),
+        ]
+    }
+
+    static func make(
+        accessState: AccessibilityAccessState,
+        sampleEntries: [SoundEntry] = [],
+    ) -> some View {
+        SettingsView()
+            .environment(SoundLibrary(previewEntries: sampleEntries))
+            .environment(EventLogStore())
+            .environment(MenuBarState())
+            .environmentObject(LaunchAtLoginManager(previewIsEnabled: false))
+            .environmentObject(
+                AccessibilityPermissionManager(
+                    previewAccessState: accessState,
+                    bundlePath: "/Applications/FROK.app",
+                    bundleIdentifier: "com.YB.frok"
+                )
+            )
+    }
 }

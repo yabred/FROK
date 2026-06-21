@@ -8,12 +8,20 @@ final class LaunchAtLoginManager: ObservableObject {
     @Published private(set) var isEnabled: Bool
 
     private let hasConfiguredKey = "hasConfiguredLaunchAtLogin"
+    private let isPreviewMode: Bool
 
     private init() {
+        isPreviewMode = false
         isEnabled = Self.isRegistered
     }
 
+    init(previewIsEnabled: Bool) {
+        isPreviewMode = true
+        isEnabled = previewIsEnabled
+    }
+
     func refreshStatus() {
+        guard !isPreviewMode else { return }
         isEnabled = Self.isRegistered
     }
 
@@ -25,6 +33,11 @@ final class LaunchAtLoginManager: ObservableObject {
     }
 
     func setEnabled(_ enabled: Bool) {
+        if isPreviewMode {
+            isEnabled = enabled
+            return
+        }
+
         do {
             if enabled {
                 guard SMAppService.mainApp.status != .enabled else { return }
