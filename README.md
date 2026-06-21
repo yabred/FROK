@@ -113,4 +113,4 @@ Open **Log** in the settings footer to see what triggered each sound.
 
 ## License
 
-Not specified.
+MIT — see [LICENSE](LICENSE).
