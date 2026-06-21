@@ -2,6 +2,7 @@ import AppKit
 import SwiftUI
 import UniformTypeIdentifiers
 
+@MainActor
 struct SettingsView: View {
     @Environment(SoundLibrary.self) private var soundLibrary
     @Environment(MenuBarState.self) private var menuBarState
