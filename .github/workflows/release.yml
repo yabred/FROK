@@ -1,0 +1,37 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve version
+        id: version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Release version: ${VERSION}"
+
+      - name: Package release
+        run: |
+          chmod +x scripts/package-release.sh
+          scripts/package-release.sh \
+            --version "${{ steps.version.outputs.version }}" \
+            --output-dir dist
+
+      - name: Upload release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/FROK-${{ steps.version.outputs.version }}.zip
+          generate_release_notes: true

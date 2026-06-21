@@ -18,11 +18,28 @@ Instant sound effects for macOS. FROK lives in your menu bar, keeps sounds ready
 
 ## Install
 
+### Homebrew (recommended)
+
+```bash
+brew tap yabred/homebrew
+brew install --cask frok
+```
+
+This installs `FROK.app` to `/Applications` and adds the `frok` CLI to your PATH.
+
+> **Note:** Current releases are not notarized. On first launch, macOS may block the app. Open **System Settings → Privacy & Security → Open Anyway**, or run:
+>
+> ```bash
+> xattr -cr /Applications/FROK.app
+> ```
+
+### Build from source
+
 1. Open `FROK.xcodeproj` in Xcode 15+.
 2. Select the **FROK** scheme, then build and run (⌘R).
 3. A menu bar icon appears — click it to open settings.
 
-To use `frok` from anywhere in Terminal, add it to your PATH:
+To use `frok` from anywhere in Terminal when running from Xcode:
 
 ```bash
 ln -sf /path/to/FROK.app/Contents/Resources/bin/frok /usr/local/bin/frok
