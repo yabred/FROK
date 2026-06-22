@@ -7,6 +7,7 @@ struct FROKApp: App {
     @ObservedObject private var launchAtLoginManager = LaunchAtLoginManager.shared
     @ObservedObject private var accessibilityPermissionManager = AccessibilityPermissionManager.shared
     @State private var menuBarState = MenuBarState()
+    @State private var didWireMenuBarIconUpdates = false
 
     var body: some Scene {
         MenuBarExtra {
@@ -27,6 +28,8 @@ struct FROKApp: App {
                 set: { menuBarState.isPresented = $0 }
             ),
             statusItem: { _ in
+                guard !didWireMenuBarIconUpdates else { return }
+                didWireMenuBarIconUpdates = true
                 wireMenuBarIconUpdates()
             }
         )

@@ -42,7 +42,7 @@ struct SettingsView: View {
         .onExitCommand {
             focusedAliasID = nil
         }
-        .onAppear {
+        .task {
             launchAtLogin.refreshStatus()
             accessibilityPermission.refreshStatus()
         }
@@ -354,31 +354,28 @@ private struct MenuBarWindowContentSizeSync: NSViewRepresentable {
         func sync(targetHeight: CGFloat) {
             guard targetHeight > 0, abs(lastSyncedHeight - targetHeight) > 1 else { return }
             lastSyncedHeight = targetHeight
-            resizeWindow(toHeight: targetHeight)
+            scheduleResize(toHeight: targetHeight)
         }
 
         override func viewDidMoveToWindow() {
             super.viewDidMoveToWindow()
             guard lastSyncedHeight > 0 else { return }
-            resizeWindow(toHeight: lastSyncedHeight)
+            scheduleResize(toHeight: lastSyncedHeight)
+        }
+
+        private func scheduleResize(toHeight targetHeight: CGFloat) {
+            DispatchQueue.main.async { [weak self] in
+                self?.resizeWindow(toHeight: targetHeight)
+            }
         }
 
         private func resizeWindow(toHeight targetHeight: CGFloat) {
-            guard let window = menuBarExtraWindow() ?? window,
-                  let contentView = window.contentView else { return }
+            guard let window, let contentView = window.contentView else { return }
 
-            contentView.layoutSubtreeIfNeeded()
-            let currentSize = contentView.bounds.size
-            let width = max(currentSize.width, 570)
-            guard abs(currentSize.height - targetHeight) > 1 else { return }
+            let width = max(contentView.bounds.width, 570)
+            guard abs(contentView.bounds.height - targetHeight) > 1 else { return }
 
             window.setContentSize(NSSize(width: width, height: targetHeight))
-        }
-
-        private func menuBarExtraWindow() -> NSWindow? {
-            NSApplication.shared.windows.first { window in
-                String(describing: type(of: window)).contains("MenuBarExtraWindow")
-            }
         }
     }
 }
