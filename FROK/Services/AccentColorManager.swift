@@ -37,6 +37,7 @@ final class AccentColorManager {
     var color: Color { Self.colors[index] }
     var nsColor: NSColor { Self.nsColors[index] }
     var currentIndex: Int { index }
+    var onColorChanged: (() -> Void)?
 
     init() {
         persistenceEnabled = true
@@ -51,7 +52,11 @@ final class AccentColorManager {
 
     func cycle() {
         index = (index + 1) % Self.colors.count
-        guard persistenceEnabled else { return }
+        guard persistenceEnabled else {
+            onColorChanged?()
+            return
+        }
         UserDefaults.standard.set(index, forKey: Self.indexKey)
+        onColorChanged?()
     }
 }

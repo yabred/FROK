@@ -18,7 +18,8 @@ struct FROKApp: App {
                 .environmentObject(launchAtLoginManager)
                 .environmentObject(accessibilityPermissionManager)
         } label: {
-            menuBarIconLabel
+            MenuBarIconLabel(playingIcon: menuBarState.playingIcon)
+                .equatable()
         }
         .menuBarExtraAccess(
             isPresented: Binding(
@@ -26,26 +27,44 @@ struct FROKApp: App {
                 set: { menuBarState.isPresented = $0 }
             ),
             statusItem: { _ in
-                let library = appDelegate.soundLibrary
-                library.onPlaybackActivityChanged = {
-                    menuBarState.isSoundPlaying = library.isPlayingAny
-                }
-                menuBarState.isSoundPlaying = library.isPlayingAny
+                wireMenuBarIconUpdates()
             }
         )
         .menuBarExtraStyle(.window)
         .windowResizability(.contentSize)
     }
 
-    @ViewBuilder
-    private var menuBarIconLabel: some View {
-        if menuBarState.isSoundPlaying {
-            Image(nsImage: StatusBarIcon.playingImage(
-                accentIndex: appDelegate.accentColorManager.currentIndex,
-                color: appDelegate.accentColorManager.nsColor
-            ))
+    private func wireMenuBarIconUpdates() {
+        let library = appDelegate.soundLibrary
+        let accentColorManager = appDelegate.accentColorManager
+
+        let sync = {
+            menuBarState.updatePlayingIcon(
+                isPlaying: library.isPlayingAny,
+                accentIndex: accentColorManager.currentIndex,
+                color: accentColorManager.nsColor
+            )
+        }
+
+        library.onPlaybackActivityChanged = sync
+        accentColorManager.onColorChanged = sync
+        sync()
+    }
+}
+
+private struct MenuBarIconLabel: View, Equatable {
+    let playingIcon: NSImage?
+
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.playingIcon === rhs.playingIcon
+    }
+
+    var body: some View {
+        if let playingIcon {
+            Image(nsImage: playingIcon)
         } else {
-            Image(nsImage: StatusBarIcon.templateImage())
+            Image("status_icon")
+                .renderingMode(.template)
         }
     }
 }

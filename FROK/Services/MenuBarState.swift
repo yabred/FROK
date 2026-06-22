@@ -1,10 +1,11 @@
+import AppKit
 import SwiftUI
 
 @MainActor
 @Observable
 final class MenuBarState {
     var isPresented = false
-    var isSoundPlaying = false
+    private(set) var playingIcon: NSImage?
     private(set) var isPickingFiles = false
 
     func beginFilePick() {
@@ -30,5 +31,11 @@ final class MenuBarState {
         Task { @MainActor in
             isPresented = true
         }
+    }
+
+    func updatePlayingIcon(isPlaying: Bool, accentIndex: Int, color: NSColor) {
+        let nextIcon = isPlaying ? StatusBarIcon.playingImage(accentIndex: accentIndex, color: color) : nil
+        guard nextIcon !== playingIcon else { return }
+        playingIcon = nextIcon
     }
 }
