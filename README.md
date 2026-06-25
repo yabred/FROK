@@ -20,8 +20,14 @@ Instant sound effects for macOS. FROK lives in your menu bar, keeps sounds ready
 
 ### Homebrew (recommended)
 
+Если не установлен Homebrew – https://brew.sh/
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
 ```bash
 brew tap yabred/tap
+brew trust yabred/tap
 brew install --cask frok
 ```
 
